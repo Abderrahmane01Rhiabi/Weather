@@ -33,7 +33,7 @@ mongoose.connection.on('disconnected',function(){
 //-------------------------------------------------
 // Use CORS and File Upload modules here
 app.use(cors());
-app.use(fileUpload());
+//app.use(fileUpload());
 
 //set view engin
 //app.set('view engine','ejs');
