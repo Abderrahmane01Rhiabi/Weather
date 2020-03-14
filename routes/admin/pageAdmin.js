@@ -77,7 +77,7 @@ router.post('/login',(req,res) => {
         console.log(admin[0].password)
         console.log(req.body.email);
         
-        bcrypt.compare(req.body.password, admin.password,(err,result) => {
+        bcrypt.compare(req.body.password, admin[0].password,(err,result) => {
             console.log(admin[0].password)
             console.log(req.body.password);
             console.log(result);
