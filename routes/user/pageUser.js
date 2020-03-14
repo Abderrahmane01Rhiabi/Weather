@@ -215,7 +215,7 @@ router.get('/signup/confirmation/:tok',(req,res) => {
                         msg: 'We can not find a user for this token.' 
                         });
                 }
-                if (user.isVerified){
+                if (user.isVerified=='true'){
                     res.status(400).send({ 
                         type: 'already-verified', 
                         msg: 'This user has already been verified.' 
