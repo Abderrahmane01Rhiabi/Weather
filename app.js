@@ -4,6 +4,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 require('dotenv').config();
+const cors = require('cors'); // addition we make
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -30,6 +31,9 @@ mongoose.connection.on('disconnected',function(){
     console.log('Base De Donne Disactive');
 })
 //-------------------------------------------------
+// Use CORS and File Upload modules here
+app.use(cors());
+app.use(fileUpload());
 
 //set view engin
 //app.set('view engine','ejs');
