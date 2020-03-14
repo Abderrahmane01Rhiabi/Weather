@@ -72,7 +72,7 @@ router.post('/login', (req,res) => {
             });
         }
         
-        bcrypt.compare(req.body.password, user.password,(err,result) => {
+        bcrypt.compare(req.body.password, user[0].password,(err,result) => {
 
             if(err){
                      res.status(401).send({
