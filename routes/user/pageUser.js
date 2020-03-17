@@ -64,33 +64,40 @@ router.get('/dataOfuser/:userId',verifyToken,(req,res) =>{
 
 //test si le user peut acceder 
 router.post('/login', (req,res) => {
-    User.find({email: req.body.email}).exec()
+    console.log(req.body.email)
+    User.findOne({email : req.body.email}).exec()
     .then(user => {
-        if(user.length < 1){
+        console.log("hhhh")
+        //console.log(user.password)
+        if(!user){
              res.status(401).send({
                 message : 'Login Faild'
             });
         }
-        
-        bcrypt.compare(req.body.password, user[0].password,(err,result) => {
+        else{
+        console.log("hhhh")
+        console.log(user.password)
+        bcrypt.compare(req.body.password, user.password,(err,result) => {
 
             if(err){
-                     res.status(401).send({
-                    message : 'Login Faild'
-                });
+                res.status(401).send({
+                     message : 'Login Faild'
+                 });
             }
-            if(!user[0].isVerified){
+
+            console.log("vvv")
+        console.log(user.isVerified)
+            if(!user.isVerified){
                 return res.status(401).send({
-                type : 'not-verified',
-                message : 'Your account has not been verified' 
-                }); 
+                 message : 'Your account has not been verified' 
+                 }); 
             }
             if(result){
                 const token = jwt.sign(
                     {
-                    email : user[0].email,
-                    _id : user[0]._id,
-                    role : user[0].role
+                    email : user.email,
+                    _id : user._id,
+                    role : user.role
                     }, secret,
                     {
                         expiresIn : "1h"
@@ -112,7 +119,8 @@ router.post('/login', (req,res) => {
                 message : 'Login Faild'
             });
         }    
-        });
+           });
+        }
     });
     
 });
