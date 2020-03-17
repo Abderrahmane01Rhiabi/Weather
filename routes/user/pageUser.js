@@ -21,13 +21,13 @@ router.get('/allDataUser',verifyToken,function(req,res){
             console.log(data);
         return res.json(data)
         }else{
-            return res.status(404).send({
+            return res.status(404).json({
                 message : "I Cant Give You Data You Are Note A Member"
             })
         }
     })
     .catch(err => {
-        return res.status(500).send({
+        return res.status(500).json({
             error : err
         });
     }) 
@@ -44,19 +44,19 @@ router.get('/dataOfuser/:userId',verifyToken,(req,res) =>{
             return res.status(200).json({result}) 
         }else{
             console.log(result)
-             res.status(404).send({
+             res.status(404).json({
                 message : "User Not Founded"
             })
         }
     }else{
-        res.status(404).send({
+        res.status(404).json({
             message : "I Cant Give You Data You Are Note A Member"
         })
     }
     })
     .catch(err => {
         console.log(err);
-         res.status(500).send({
+         res.status(500).json({
             error : err
         });
     });
@@ -70,7 +70,7 @@ router.post('/login', (req,res) => {
         console.log("hhhh")
         //console.log(user.password)
         if(!user){
-             res.status(401).send({
+             res.status(401).json({
                 message : 'Login Faild'
             });
         }
@@ -80,7 +80,7 @@ router.post('/login', (req,res) => {
         bcrypt.compare(req.body.password, user.password,(err,result) => {
 
             if(err){
-                res.status(401).send({
+                res.status(401).json({
                      message : 'Login Faild'
                  });
             }
@@ -88,7 +88,7 @@ router.post('/login', (req,res) => {
             console.log("vvv")
         console.log(user.isVerified)
             if(!user.isVerified){
-                return res.status(401).send({
+                return res.status(401).json({
                  message : 'Your account has not been verified' 
                  }); 
             }
@@ -108,14 +108,14 @@ router.post('/login', (req,res) => {
                     message : 'Login successful',
                     token : token
                 });
-                // res.send({ 
+                // res.json({ 
                 //     token: generateToken(user), 
                 //     user: user.toJSON() 
                 // });
             }
             if(!result){
                 console.log(result);
-                 res.status(400).send({
+                 res.status(401).json({
                 message : 'Login Faild'
             });
         }    
@@ -130,7 +130,7 @@ router.post('/signup', function(req,res){
     .exec()
     .then(result => {
         if (result.length >= 1){
-            return res.status(409).send({
+            return res.status(409).json({
                 message : 'Mail exists'
             });
         } else {
@@ -152,8 +152,8 @@ router.post('/signup', function(req,res){
                 // Save the verification token
                 token.save(function(err){
                     if (err) { 
-                        return res.status(500).send({ 
-                        msg: err.message 
+                        return res.status(500).json({ 
+                        error: err.message 
                         }); 
                     }
                     console.log(token.token)
@@ -174,7 +174,7 @@ router.post('/signup', function(req,res){
                             transporter.sendMail(mailOptions, function (err,info) {
                             if (err) { 
                                 return res.status(500).send({ 
-                                    msg: err.message 
+                                    error: err.message 
                                 }); 
                             }
                             console.log('Emaom sent : '+info.response)
@@ -188,7 +188,7 @@ router.post('/signup', function(req,res){
                     // });
                 }).catch(err => {
                     console.log(err);
-                    return res.status(500).send({
+                    return res.status(500).json({
                         error : err
                     });
                 })
@@ -203,37 +203,37 @@ router.get('/signup/confirmation/:tok',(req,res) => {
         console.log("2")
         console.log(token)
         if(err){
-            res.status.send({
-                msg : err
+            res.status(500).json({
+                error : err
             })
         }
         console.log("3")
         if(!token){
             console.log("4")
-                  res.status(400).send({ 
+                  res.status(400).json({ 
                 type: 'not-verified',
-                msg: 'Your token is expired.' 
+                message: 'Your token is expired.' 
             });
         }
             console.log("5")
             User.findOne({ _id: token._userId}, function (err, user) {
 
                 if (!user){
-                    res.status(400).send({ 
-                        msg: 'We can not find a user for this token.' 
+                    res.status(400).json({ 
+                        message: 'We can not find a user for this token.' 
                         });
                 }
                 if (user.isVerified=='true'){
-                    res.status(400).send({ 
+                    res.status(400).json({ 
                         type: 'already-verified', 
-                        msg: 'This user has already been verified.' 
+                        message: 'This user has already been verified.' 
                     });
                 }
                 console.log("6")
                             // Verify and save the user
             user.isVerified = true;
             user.save(function (err) {
-                if (err) {  res.status(500).send({ msg: err.message }); }
+                if (err) {  res.status(500).json({ error: err.message }); }
                 res.status(200).send("The account has been verified. Please log in.");
             });
             })
@@ -247,24 +247,24 @@ router.delete('/delete/:userId',verifyToken,(req,res) => {
         //si le id nexiste pas il va affiche le 2em massage car lenght est >1
         if(res.adminData.role=='admin' || res.adminData.role=='supperUser'){
             if(result.deletedCount == 1){
-             res.status(200).send({
+             res.status(200).json({
                 message : "User Deleted"
             }) 
         }else{
             console.log(result)
-             res.status(404).send({
+             res.status(404).json({
                 message : "User Not Founded"
             })
         }
     }else{
-         res.status(404).send({
+         res.status(404).json({
             message : "I Cant Give You Data You Are Note A Member"
         })        
     }
     })
     .catch(err => {
         console.log(err);
-         res.status(500).send({
+         res.status(500).json({
             error : err
         });
     });
@@ -327,13 +327,13 @@ router.put('/update/:id',function (req, res, next) {
         _.assign(post, req.body); // update user
         post.save(function(err) {
             if (err) return next(err);
-         res.status(201).send({
+         res.status(201).json({
              message : "Data Modifye"
          });
                 // return res.json(200, post);
         })
     }else{
-        res.status(201).send({
+        res.status(201).json({
             message : "No Data Modifye"
             });
         }

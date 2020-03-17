@@ -81,7 +81,7 @@ router.put('/updateCapteur/:macAddr',verifyToken,function (req, res, next) {
                 // return res.json(200, post);
         })
     }else{
-        res.status(201).json({
+        res.status(404).json({
             message : "No Data Modifye"
         });
     }
@@ -97,7 +97,7 @@ router.post('/weatherData/:macAddCapt',(req,res) =>{
     var newData = new Weather(data)
     newData.save()
     .then(data => {
-        res.status(200).send({
+        res.status(200).json({
             message : "data arrive"
         })
     })
@@ -113,8 +113,8 @@ router.get('/temp&humi/:macAddCapt/day',(req,res) => {
         if(data){
             res.status(200).json(data)
         }else{
-            res.status(200).json({
-                message : "no data found"
+            res.status(404).json({
+                message : "No Data Found"
             })
         }
     })
@@ -136,8 +136,8 @@ router.get('/temp&humi/:macAddCapt/week',(req,res) => {
         if(data){
             res.status(200).json(data)
         }else{
-            res.status(200).json({
-                message : "no data found"
+            res.status(404).json({
+                message : "No Data Found"
             })
         }
     })
@@ -159,8 +159,8 @@ router.get('/temp&humi/:macAddCapt/month',(req,res) => {
         if(data){
             res.status(200).json(data)
         }else{
-            res.status(200).json({
-                message : "no data found"
+            res.status(404).json({
+                message : "No Data Found"
             })
         }
     })
