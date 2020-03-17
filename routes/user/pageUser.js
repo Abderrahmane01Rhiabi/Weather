@@ -70,7 +70,7 @@ router.post('/login', (req,res) => {
         console.log("hhhh")
         //console.log(user.password)
         if(!user){
-             res.status(401).json({
+             res.status(400).json({
                 message : 'Login Faild'
             });
         }
@@ -80,7 +80,7 @@ router.post('/login', (req,res) => {
         bcrypt.compare(req.body.password, user.password,(err,result) => {
 
             if(err){
-                res.status(401).json({
+                res.status(400).json({
                      message : 'Login Faild'
                  });
             }
@@ -88,7 +88,7 @@ router.post('/login', (req,res) => {
             console.log("vvv")
         console.log(user.isVerified)
             if(!user.isVerified){
-                return res.status(401).json({
+                return res.status(400).json({
                  message : 'Your account has not been verified' 
                  }); 
             }
@@ -115,7 +115,7 @@ router.post('/login', (req,res) => {
             }
             if(!result){
                 console.log(result);
-                 res.status(401).json({
+                 res.status(400).json({
                 message : 'Login Faild'
             });
         }    
