@@ -65,20 +65,21 @@ router.get('/dataOfAdmin/:adminId',verifyToken,(req,res) =>{
 });
 
 router.post('/login',(req,res) => {
-    User.find({email: req.body.email}).exec()
+    User.findOne({email: req.body.email}).exec()
     .then(admin => {
-        if(admin.length < 1){
+        console.log(admin)
+        if(!admin){
             res.status(401).send({
-                message : 'Email:Login Faild'
+                message : 'Login Faild'
             });
         }
-
+        else{
         console.log(req.body.password);
-        console.log(admin[0].password)
+        console.log(admin.password)
         console.log(req.body.email);
         
-        bcrypt.compare(req.body.password, admin[0].password,(err,result) => {
-            console.log(admin[0].password)
+        bcrypt.compare(req.body.password, admin.password,(err,result) => {
+            console.log(admin.password)
             console.log(req.body.password);
             console.log(result);
 
@@ -90,9 +91,9 @@ router.post('/login',(req,res) => {
             if(result){
                 const token = jwt.sign(
                     {
-                    email : admin[0].email,
-                    _id : admin[0]._id,
-                    role : admin[0].role
+                    email : admin.email,
+                    _id : admin._id,
+                    role : admin.role
                     }, secret,
                     {
                         expiresIn : "1h"
@@ -114,6 +115,7 @@ router.post('/login',(req,res) => {
             });
         }    
         });
+        }
     });
     
 });
