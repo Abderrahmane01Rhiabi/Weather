@@ -106,10 +106,8 @@ router.post('/weatherData/:macAddCapt',(req,res) =>{
 router.get('/temp&humi/:macAddCapt/day',(req,res) => {
     var date = new Date()
     console.log(date)
-    //console.log(date - 24*60*60*1000)
     var datee = new Date(date - (24*60*60*1000))
-    console.log(datee)
-     
+    console.log(datee) 
     Weather.find({macAddCapt : req.params.macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1}).exec()
     .then(data => {
         if(data){
@@ -127,5 +125,52 @@ router.get('/temp&humi/:macAddCapt/day',(req,res) => {
         });
     });
 })
+
+router.get('/temp&humi/:macAddCapt/week',(req,res) => {
+    var date = new Date()
+    console.log(date)
+    var datee = new Date(date - (7*24*60*60*1000))
+    console.log(datee) 
+    Weather.find({macAddCapt : req.params.macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1}).exec()
+    .then(data => {
+        if(data){
+            res.status(200).json(data)
+        }else{
+            res.status(200).json({
+                message : "no data found"
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error : err
+        });
+    });
+})
+
+router.get('/temp&humi/:macAddCapt/month',(req,res) => {
+    var date = new Date()
+    console.log(date)
+    var datee = new Date(date - (30*24*60*60*1000))
+    console.log(datee) 
+    Weather.find({macAddCapt : req.params.macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1,dateOfcomming : 1}).sort('dateOfcomming').exec()
+    .then(data => {
+        if(data){
+            res.status(200).json(data)
+        }else{
+            res.status(200).json({
+                message : "no data found"
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error : err
+        });
+    });
+})
+
 
 module.exports = router;
