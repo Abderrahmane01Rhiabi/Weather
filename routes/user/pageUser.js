@@ -106,7 +106,8 @@ router.post('/login', (req,res) => {
                     console.log(result);
                      res.status(200).json({
                     message : 'Login successful',
-                    token : token
+                    token : token,
+                    role : user.role
                 });
                 // res.json({ 
                 //     token: generateToken(user), 
@@ -131,7 +132,7 @@ router.post('/signup', function(req,res){
     .then(result => {
         if (result.length >= 1){
             return res.status(409).json({
-                message : 'Mail exists'
+                message : 'Mail Existe'
             });
         } else {
                 var data = {

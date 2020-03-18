@@ -11,23 +11,30 @@ const Capteur = require('../../models/capteurs');
 const Weather = require('../../models/weather');
 
 router.post('/ajouteCapteur', function(req,res){
-    Capteur.find({_id : req.body._id})
+    console.log('1')
+    console.log(req.body._macAddr)
+
+    Capteur.findOne({_macAddr : req.body._macAddr})
     .exec()
     .then(capt => {
-        if (capt.length >= 1){
+        console.log('2')
+        if (capt){
+            console.log('0')
             return res.status(409).json({
-                message : 'Capteur existe exists'
+                message : 'Capteur Existe'
             });
         } else {
-
+            console.log('3')
             var data = {
                     "name" : req.body.name,
                     "place" : req.body.place,
-                    "macAddr" : req.body.macAddr
+                    "_macAddr" : req.body._macAddr
                      }
-                var newCapt = new Capteur(data);     
+                var newCapt = new Capteur(data);  
+                console.log('4')   
                 newCapt.save()
                 .then(result => {
+                    console.log('5')   
                     console.log(result);
                     res.status(201).json({
                         message : "Capteur added"
@@ -43,8 +50,8 @@ router.post('/ajouteCapteur', function(req,res){
         });
 });
 
-router.delete('/deleteCapteur/:macAddr',verifyToken,(req,res) => {
-    Capteur.remove({_id : req.params.macAddr}).exec()
+router.delete('/deleteCapteur/:_macAddr',(req,res) => {
+    Capteur.remove({_macAddr : req.params._macAddr}).exec()
     .then(result => {
         //si le id nexiste pas il va affiche le 2em massage car lenght est >1
         if(result.deletedCount >= 1){
@@ -67,9 +74,9 @@ router.delete('/deleteCapteur/:macAddr',verifyToken,(req,res) => {
     });
 });
 
-router.put('/updateCapteur/:macAddr',verifyToken,function (req, res, next) {
+router.put('/updateCapteur/:_macAddr',function (req, res, next) {
 
-    Capteur.findById(req.params.macAddr, function(err, post) {
+    Capteur.findById(req.params._macAddr, function(err, post) {
         if (err) return next(err);
         if(req.body){
         _.assign(post, req.body); 
@@ -88,33 +95,60 @@ router.put('/updateCapteur/:macAddr',verifyToken,function (req, res, next) {
     });
 });
 
-router.post('/weatherData/:macAddCapt',(req,res) =>{
-    var data = {
-        "macAddCapt" : req.params.macAddCapt,
-        "temp" : "12",
-        "humidite" : "32" 
-    }
-    var newData = new Weather(data)
-    newData.save()
-    .then(data => {
-        res.status(200).json({
-            message : "data arrive"
-        })
+router.post('/weatherData/:_macAddCapt/:temp/:humi',(req,res) =>{
+    Weather.find({_macAddCapt : req.params._macAddCapt }).exec()
+    .then(result => {
+            if(!result){
+                return res.status(409).json({
+                    message : 'Capteur Is Not Existe'
+                });
+            }
+            else{
+                var data = {
+                    "_macAddCapt" : req.params._macAddCapt,
+                    "temp" : req.params.temp,
+                    "humidite" : req.params.humi 
+                }
+                var newData = new Weather(data)
+                newData.save()
+                .then(data => {
+                    res.status(200).json({
+                        message : "data arrive"
+                    })
+                })
+            }
+    }).catch(err =>{
+        return res.status(500).json({
+            error : err
+        });
     })
 })
 
-router.get('/temp&humi/:macAddCapt/day',(req,res) => {
+router.get('/temp&humi/:_macAddCapt/day',(req,res) => {
     var date = new Date()
     console.log(date)
     var datee = new Date(date - (24*60*60*1000))
     console.log(datee) 
-    Weather.find({macAddCapt : req.params.macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1}).exec()
+    Weather.find({_macAddCapt : req.params._macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1}).exec()
     .then(data => {
         if(data){
-            res.status(200).json(data)
+            console.log(data.length)
+            var nbr = data.length;
+            var sum_temp = 0,
+                sum_humi = 0;
+            for(var i = 0;i < data.length ; i++){   
+                sum_temp = sum_temp + data[i].temp;
+                sum_humi = sum_humi + data[i].humidite;    
+        }
+        var moy_temp = sum_temp/nbr;
+        var moy_humi = sum_humi/nbr
+
+            res.status(200).json({
+                      moy_temp,moy_humi
+                    })
         }else{
             res.status(404).json({
-                message : "No Data Found"
+                message : "Capteur Is Not Existe"
             })
         }
     })
@@ -126,18 +160,31 @@ router.get('/temp&humi/:macAddCapt/day',(req,res) => {
     });
 })
 
-router.get('/temp&humi/:macAddCapt/week',(req,res) => {
+router.get('/temp&humi/:_macAddCapt/week',(req,res) => {
     var date = new Date()
     console.log(date)
     var datee = new Date(date - (7*24*60*60*1000))
     console.log(datee) 
-    Weather.find({macAddCapt : req.params.macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1}).exec()
+    Weather.find({_macAddCapt : req.params._macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1}).exec()
     .then(data => {
+        console.log(data.length)
         if(data){
-            res.status(200).json(data)
+            var nbr = data.length;
+            var sum_temp = 0,
+                sum_humi = 0;
+            for(var i = 0;i < data.length ; i++){   
+                sum_temp = sum_temp + data[i].temp;
+                sum_humi = sum_humi + data[i].humidite;    
+        }
+        var moy_temp = sum_temp/nbr;
+        var moy_humi = sum_humi/nbr
+
+            res.status(200).json({
+                      moy_temp,moy_humi
+                    })
         }else{
             res.status(404).json({
-                message : "No Data Found"
+                message : "Capteur Is Not Existe"
             })
         }
     })
@@ -149,18 +196,31 @@ router.get('/temp&humi/:macAddCapt/week',(req,res) => {
     });
 })
 
-router.get('/temp&humi/:macAddCapt/month',(req,res) => {
+router.get('/temp&humi/:_macAddCapt/month',(req,res) => {
     var date = new Date()
     console.log(date)
     var datee = new Date(date - (30*24*60*60*1000))
     console.log(datee) 
-    Weather.find({macAddCapt : req.params.macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1,dateOfcomming : 1}).sort('dateOfcomming').exec()
+    Weather.find({_macAddCapt : req.params._macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1,dateOfcomming : 1}).sort('dateOfcomming').exec()
     .then(data => {
+        console.log(data.length)
         if(data){
-            res.status(200).json(data)
+            var nbr = data.length;
+            var sum_temp = 0,
+                sum_humi = 0;
+            for(var i = 0;i < data.length ; i++){   
+                sum_temp = sum_temp + data[i].temp;
+                sum_humi = sum_humi + data[i].humidite;    
+        }
+        var moy_temp = sum_temp/nbr;
+        var moy_humi = sum_humi/nbr
+
+            res.status(200).json({
+                      moy_temp,moy_humi
+                    })
         }else{
             res.status(404).json({
-                message : "No Data Found"
+                message : "Capteur Is Not Existe"
             })
         }
     })
