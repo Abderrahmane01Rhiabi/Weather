@@ -322,6 +322,7 @@ function verifyToken (req,res,next){
 //pour la verification de token je sais pas###############
 router.put('/update/:id',function (req, res, next) {
     // fetch user
+    console.log(req.params.id)
     User.findById(req.params.id, function(err, post) {
         if (err) return next(err);
         if(post){
