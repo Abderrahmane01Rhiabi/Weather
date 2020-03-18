@@ -17,7 +17,7 @@ const Token = require('../../models/token');
 router.get('/allDataUser',verifyToken,function(req,res){
     User.find({})
     .then(data =>{
-        if(res.adminData.role=='admin' || res.adminData.role=='supperUser'){
+        if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
             console.log(data);
         return res.json(data)
         }else{
@@ -38,7 +38,7 @@ router.get('/dataOfuser/:userId',verifyToken,(req,res) =>{
     User.find({_id : req.params.userId}).exec()
     .then(result => {
         console.log(res.adminData.email)
-        if(res.adminData.role=='admin' || res.adminData.role=='supperUser'){
+        if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
             if(result.length >= 1){
             console.log(result)
             return res.status(200).json({result}) 
@@ -71,7 +71,7 @@ router.post('/login', (req,res) => {
         //console.log(user.password)
         if(!user){
              res.status(200).json({
-                message : 'Login Faild'
+                message : 'Login Failde'
             });
         }
         else{
@@ -81,7 +81,7 @@ router.post('/login', (req,res) => {
 
             if(err){
                 res.status(200).json({
-                     message : 'Login Faild'
+                     message : 'Login Failde'
                  });
             }
 
@@ -116,7 +116,7 @@ router.post('/login', (req,res) => {
             if(!result){
                 console.log(result);
                  res.status(200).json({
-                message : 'Login Faild'
+                message : 'Login Failde'
             });
         }    
            });
@@ -245,7 +245,7 @@ router.delete('/delete/:userId',verifyToken,(req,res) => {
     User.remove({_id : req.params.userId}).exec()
     .then(result => {
         //si le id nexiste pas il va affiche le 2em massage car lenght est >1
-        if(res.adminData.role=='admin' || res.adminData.role=='supperUser'){
+        if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
             if(result.deletedCount == 1){
              res.status(200).json({
                 message : "User Deleted"
