@@ -15,14 +15,8 @@ router.get('/allDataAdmin',verifyToken,function(req,res){
     User.find({$or :[{role : 'admin'},{role : 'supperAdmin'}]})
     .then(data =>{
         if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
-            if(data){
             console.log(data);
         res.status(200).json(data)
-        }else{
-            res.status(404).json({
-                message : "No data a Give You"
-            })
-        }
     }else{
         res.status(404).json({
             message : "I Cant Give You Data You Are Note A Member"
@@ -70,7 +64,7 @@ router.post('/login',(req,res) => {
         console.log(admin)
         if(!admin){
             res.status(401).json({
-                message : 'Login Failde'
+                message : 'Login Failed'
             });
         }
         else{
@@ -85,7 +79,7 @@ router.post('/login',(req,res) => {
 
             if(err){
                     res.status(401).json({
-                    message : 'Login Failde'
+                    message : 'Login Failed'
                 });
             }
             if(result){
@@ -111,7 +105,7 @@ router.post('/login',(req,res) => {
             if(!result){
                 console.log(result);
                 res.status(400).json({
-                message : 'Login Failde'
+                message : 'Login Failed'
             });
         }    
         });

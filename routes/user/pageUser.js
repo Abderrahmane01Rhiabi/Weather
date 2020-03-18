@@ -22,7 +22,7 @@ router.get('/allDataUser',verifyToken,function(req,res){
         return res.json(data)
         }else{
             return res.status(404).json({
-                message : "I Cant Give You Data You Are Note A Member"
+                message : "I Cant Give You Data You Are Not A Member"
             })
         }
     })
@@ -50,7 +50,7 @@ router.get('/dataOfuser/:userId',verifyToken,(req,res) =>{
         }
     }else{
         res.status(404).json({
-            message : "I Cant Give You Data You Are Note A Member"
+            message : "I Cant Give You Data You Are Not A Member"
         })
     }
     })
@@ -71,7 +71,7 @@ router.post('/login', (req,res) => {
         //console.log(user.password)
         if(!user){
              res.status(200).json({
-                message : 'Login Failde'
+                message : 'Login Failed'
             });
         }
         else{
@@ -81,7 +81,7 @@ router.post('/login', (req,res) => {
 
             if(err){
                 res.status(200).json({
-                     message : 'Login Failde'
+                     message : 'Login Failed'
                  });
             }
 
@@ -116,7 +116,7 @@ router.post('/login', (req,res) => {
             if(!result){
                 console.log(result);
                  res.status(200).json({
-                message : 'Login Failde'
+                message : 'Login Failed'
             });
         }    
            });
@@ -258,7 +258,7 @@ router.delete('/delete/:userId',verifyToken,(req,res) => {
         }
     }else{
          res.status(404).json({
-            message : "I Cant Give You Data You Are Note A Member"
+            message : "I Cant Give You Data You Are Not A Member"
         })        
     }
     })
