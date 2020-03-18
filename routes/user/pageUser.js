@@ -324,6 +324,7 @@ router.put('/update/:id',function (req, res, next) {
     // fetch user
     User.findById(req.params.id, function(err, post) {
         if (err) return next(err);
+        if(post){
         if(req.body){
         _.assign(post, req.body); // update user
         post.save(function(err) {
@@ -338,7 +339,11 @@ router.put('/update/:id',function (req, res, next) {
             message : "No Data Modifye"
             });
         }
-
+    }else{
+        res.status(201).json({
+            message : "Not Founded"
+        });
+    }
     });
 });
 //=============================================================

@@ -152,6 +152,7 @@ router.put('/update/:id',verifyToken,function (req, res, next) {
     User.findById(req.params.id, function(err, post) {
         if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
         if (err) return next(err);
+        if(post){
         if(req.body){
         _.assign(post, req.body); 
         post.save(function(err) {
@@ -164,6 +165,11 @@ router.put('/update/:id',verifyToken,function (req, res, next) {
     }else{
         res.status(201).json({
             message : "No Data Modifye"
+        });
+    }
+    }else{
+        res.status(201).json({
+            message : "Not Founded"
         });
     }
     }else{
