@@ -181,8 +181,8 @@ router.put('/update/:id',verifyToken,function (req, res, next) {
 });
 //=============================================================
     
-router.post('/addAdmin/:email',verifyToken,(req,res) => {
-    User.findOne({email : req.params.email}).exec()
+router.post('/addAdmin',verifyToken,(req,res) => {
+    User.findOne({email : req.body.email}).exec()
     .then(result => {
         if(res.adminData.role=='supperAdmin'){
             if(result){
@@ -190,10 +190,10 @@ router.post('/addAdmin/:email',verifyToken,(req,res) => {
                 var x =req.body.num;
                 console.log(x)
                 if(x=="1"){ 
-                        result.isVerified = true
+                        // result.isVerified = true
                         result.role = 'admin'
                         result.save(function (err) {
-                            if (err) {  res.status(500).json({ msg: err.message }); }
+                            if (err) {  res.status(500).json({ message: err.message }); }
                             res.status(200).json("Be An Admin Now");
                         });
                         console.log(result)
@@ -202,7 +202,7 @@ router.post('/addAdmin/:email',verifyToken,(req,res) => {
                 else if(x=="0"){
                     result.role = 'user'
                     result.save(function (err) {
-                        if (err) {  res.status(500).json({ msg: err.message }); }
+                        if (err) {  res.status(500).json({ message: err.message }); }
                         res.status(200).json("Be An User Now");
                     });
                         console.log(result)

@@ -10,7 +10,7 @@ const secret = "secret";
 const Capteur = require('../../models/capteurs');
 const Weather = require('../../models/weather');
 
-router.post('/ajouteCapteur', function(req,res){
+router.post('/addCapteur', function(req,res){
     console.log('1')
     console.log(req.body._macAddr)
 
@@ -25,6 +25,9 @@ router.post('/ajouteCapteur', function(req,res){
             });
         } else {
             console.log('3')
+            console.log(req.body.name)
+            console.log(req.body.place)
+            console.log(req.body._macAddr)
             var data = {
                     "name" : req.body.name,
                     "place" : req.body.place,
@@ -50,8 +53,8 @@ router.post('/ajouteCapteur', function(req,res){
         });
 });
 
-router.delete('/deleteCapteur/:_macAddr',(req,res) => {
-    Capteur.remove({_macAddr : req.params._macAddr}).exec()
+router.delete('/deleteCapteur',(req,res) => {
+    Capteur.remove({_macAddr : req.body._macAddr}).exec()
     .then(result => {
         //si le id nexiste pas il va affiche le 2em massage car lenght est >1
         if(result.deletedCount >= 1){
@@ -74,9 +77,9 @@ router.delete('/deleteCapteur/:_macAddr',(req,res) => {
     });
 });
 
-router.put('/updateCapteur/:_macAddr',function (req, res, next) {
+router.put('/updateCapteur',function (req, res, next) {
 
-    Capteur.findById(req.params._macAddr, function(err, post) {
+    Capteur.findOne({_macAddr : req.body._macAddr}, function(err, post) {
         if (err) return next(err);
         if(req.body){
         _.assign(post, req.body); 
@@ -125,10 +128,12 @@ router.post('/weatherData/:_macAddCapt/:temp/:humi',(req,res) =>{
 })
 
 router.get('/temp&humi/:_macAddCapt/day',(req,res) => {
-    var date = new Date()
+    var d = new Date()
+    var date = new Date(d.getFullYear(),d.getMonth(),d.getDate(),00,59,59)
     console.log(date)
-    var datee = new Date(date - (24*60*60*1000))
-    console.log(datee) 
+    var dd = new Date(d - (24*60*60*1000))
+    var datee = new Date(dd.getFullYear(),dd.getMonth(),dd.getDate(),00,59,59)
+    console.log(datee)
     Weather.find({_macAddCapt : req.params._macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1}).exec()
     .then(data => {
         if(data){
@@ -161,10 +166,12 @@ router.get('/temp&humi/:_macAddCapt/day',(req,res) => {
 })
 
 router.get('/temp&humi/:_macAddCapt/week',(req,res) => {
-    var date = new Date()
+    var d = new Date()
+    var date = new Date(d.getFullYear(),d.getMonth(),d.getDate(),00,59,59)
     console.log(date)
-    var datee = new Date(date - (7*24*60*60*1000))
-    console.log(datee) 
+    var dd = new Date(d - (7*24*60*60*1000))
+    var datee = new Date(dd.getFullYear(),dd.getMonth(),dd.getDate(),00,59,59)
+    console.log(datee)
     Weather.find({_macAddCapt : req.params._macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1}).exec()
     .then(data => {
         console.log(data.length)
@@ -197,10 +204,12 @@ router.get('/temp&humi/:_macAddCapt/week',(req,res) => {
 })
 
 router.get('/temp&humi/:_macAddCapt/month',(req,res) => {
-    var date = new Date()
+    var d = new Date()
+    var date = new Date(d.getFullYear(),d.getMonth(),d.getDate(),00,59,59)
     console.log(date)
-    var datee = new Date(date - (30*24*60*60*1000))
-    console.log(datee) 
+    var dd = new Date(d - (30*24*60*60*1000))
+    var datee = new Date(dd.getFullYear(),dd.getMonth(),dd.getDate(),00,59,59)
+    console.log(datee)
     Weather.find({_macAddCapt : req.params._macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1,dateOfcomming : 1}).sort('dateOfcomming').exec()
     .then(data => {
         console.log(data.length)
@@ -232,5 +241,50 @@ router.get('/temp&humi/:_macAddCapt/month',(req,res) => {
     });
 })
 
+router.get('/temp&humi/:_macAddCapt/now',(req,res) => {
+    var date = new Date()
+    Weather.find({_macAddCapt : req.params._macAddCapt , dateOfcomming : date},{_id : 0,temp : 1,humidite : 1}).exec()
+    .then(data => {
+        console.log(data.length)
+        if(data){
 
+            res.status(200).json({
+                      "humidite" : data.humidite,
+                      "temp" : data.temp
+                    })
+        }else{
+            res.status(404).json({
+                message : "Capteur Is Not Existe"
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error : err
+        });
+    });
+})
+
+
+
+router.get("/xxx"  ,(req,res) =>{
+    // var date = new Date()
+    // console.log(date)
+    // var datee = new Date(date - (24*60*60*1000))
+    // console.log(datee)
+    // var START = new Date()
+    // var END = new Date(new Date() - (8*24*60*60*1000))
+    // var date = new Date(new Date(START).setHours(00,00,00,00))
+    // var datee = new Date(new Date(END).setHours(23,59,59,999))
+    // console.log(date)
+    // console.log(datee)
+    var d = new Date()
+    var date = new Date(d.getFullYear(),d.getMonth(),d.getDate(),00,59,59)
+    console.log(date)
+    var dd = new Date(d - (7*24*60*60*1000))
+    var datee = new Date(dd.getFullYear(),dd.getMonth(),dd.getDate(),00,59,59)
+    console.log(datee)
+    
+})
 module.exports = router;

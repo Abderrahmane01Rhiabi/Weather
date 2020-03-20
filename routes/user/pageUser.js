@@ -135,6 +135,9 @@ router.post('/signup', function(req,res){
                 message : 'Mail Existe'
             });
         } else {
+            if(req.body.firstname && req.body.lastname && req.body.email && req.body.password && req.body.password2){
+                if(req.body.password.length > 6){
+                    if(req.body.password == req.body.password2){
                 var data = {
                     "firstname" : req.body.firstname,
                     "lastname" : req.body.lastname,
@@ -193,7 +196,22 @@ router.post('/signup', function(req,res){
                         error : err
                     });
                 })
+                }else{
+                    return res.status(500).json({
+                        message : "Passwords do not match"
+                    });
+                }
+            }else{
+                return res.status(500).json({
+                    message : "Password must be at least 6 characters"
+                });
             }
+            }else{
+                return res.status(500).json({
+                    message : "Please enter all fields"
+                });
+            }
+        }
        
         });
 });
