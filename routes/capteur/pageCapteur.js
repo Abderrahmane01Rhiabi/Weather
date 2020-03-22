@@ -12,9 +12,9 @@ const Weather = require('../../models/weather');
 
 router.post('/addCapteur', function(req,res){
     console.log('1')
-    console.log(req.body._macAddr)
+    console.log(req.body.macAddr)
 
-    Capteur.findOne({_macAddr : req.body._macAddr})
+    Capteur.findOne({macAddr : req.body.macAddr})
     .exec()
     .then(capt => {
         console.log('2')
@@ -27,11 +27,11 @@ router.post('/addCapteur', function(req,res){
             console.log('3')
             console.log(req.body.name)
             console.log(req.body.place)
-            console.log(req.body._macAddr)
+            console.log(req.body.macAddr)
             var data = {
                     "name" : req.body.name,
                     "place" : req.body.place,
-                    "_macAddr" : req.body._macAddr
+                    "macAddr" : req.body.macAddr
                      }
                 var newCapt = new Capteur(data);  
                 console.log('4')   
@@ -54,7 +54,7 @@ router.post('/addCapteur', function(req,res){
 });
 
 router.delete('/deleteCapteur',(req,res) => {
-    Capteur.remove({_macAddr : req.body._macAddr}).exec()
+    Capteur.remove({macAddr : req.body.macAddr}).exec()
     .then(result => {
         //si le id nexiste pas il va affiche le 2em massage car lenght est >1
         if(result.deletedCount >= 1){
@@ -79,7 +79,7 @@ router.delete('/deleteCapteur',(req,res) => {
 
 router.put('/updateCapteur',function (req, res, next) {
 
-    Capteur.findOne({_macAddr : req.body._macAddr}, function(err, post) {
+    Capteur.findOne({macAddr : req.body.macAddr}, function(err, post) {
         if (err) return next(err);
         if(req.body){
         _.assign(post, req.body); 
@@ -98,8 +98,8 @@ router.put('/updateCapteur',function (req, res, next) {
     });
 });
 
-router.post('/weatherData/:_macAddCapt/:temp/:humi',(req,res) =>{
-    Weather.find({_macAddCapt : req.params._macAddCapt }).exec()
+router.post('/weatherData/:macAddCapt/:temp/:humi',(req,res) =>{
+    Weather.find({macAddCapt : req.params.macAddCapt }).exec()
     .then(result => {
             if(!result){
                 return res.status(409).json({
@@ -108,7 +108,7 @@ router.post('/weatherData/:_macAddCapt/:temp/:humi',(req,res) =>{
             }
             else{
                 var data = {
-                    "_macAddCapt" : req.params._macAddCapt,
+                    "macAddCapt" : req.params.macAddCapt,
                     "temp" : req.params.temp,
                     "humidite" : req.params.humi 
                 }
@@ -127,14 +127,14 @@ router.post('/weatherData/:_macAddCapt/:temp/:humi',(req,res) =>{
     })
 })
 
-router.get('/temp&humi/:_macAddCapt/day',(req,res) => {
+router.get('/temp&humi/:macAddCapt/day',(req,res) => {
     var d = new Date()
     var date = new Date(d.getFullYear(),d.getMonth(),d.getDate(),00,59,59)
     console.log(date)
     var dd = new Date(d - (24*60*60*1000))
     var datee = new Date(dd.getFullYear(),dd.getMonth(),dd.getDate(),00,59,59)
     console.log(datee)
-    Weather.find({_macAddCapt : req.params._macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1}).exec()
+    Weather.find({macAddCapt : req.params.macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1}).exec()
     .then(data => {
         if(data){
             console.log(data.length)
@@ -165,14 +165,14 @@ router.get('/temp&humi/:_macAddCapt/day',(req,res) => {
     });
 })
 
-router.get('/temp&humi/:_macAddCapt/week',(req,res) => {
+router.get('/temp&humi/:macAddCapt/week',(req,res) => {
     var d = new Date()
     var date = new Date(d.getFullYear(),d.getMonth(),d.getDate(),00,59,59)
     console.log(date)
     var dd = new Date(d - (7*24*60*60*1000))
     var datee = new Date(dd.getFullYear(),dd.getMonth(),dd.getDate(),00,59,59)
     console.log(datee)
-    Weather.find({_macAddCapt : req.params._macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1}).exec()
+    Weather.find({macAddCapt : req.params.macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1}).exec()
     .then(data => {
         console.log(data.length)
         if(data){
@@ -203,14 +203,14 @@ router.get('/temp&humi/:_macAddCapt/week',(req,res) => {
     });
 })
 
-router.get('/temp&humi/:_macAddCapt/month',(req,res) => {
+router.get('/temp&humi/:macAddCapt/month',(req,res) => {
     var d = new Date()
     var date = new Date(d.getFullYear(),d.getMonth(),d.getDate(),00,59,59)
     console.log(date)
     var dd = new Date(d - (30*24*60*60*1000))
     var datee = new Date(dd.getFullYear(),dd.getMonth(),dd.getDate(),00,59,59)
     console.log(datee)
-    Weather.find({_macAddCapt : req.params._macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1,dateOfcomming : 1}).sort('dateOfcomming').exec()
+    Weather.find({macAddCapt : req.params.macAddCapt , dateOfcomming : {$gte : datee , $lte : date}},{_id : 0,temp : 1,humidite : 1,dateOfcomming : 1}).sort('dateOfcomming').exec()
     .then(data => {
         console.log(data.length)
         if(data){
@@ -241,9 +241,9 @@ router.get('/temp&humi/:_macAddCapt/month',(req,res) => {
     });
 })
 
-router.get('/temp&humi/:_macAddCapt/now',(req,res) => {
+router.get('/temp&humi/:macAddCapt/now',(req,res) => {
     var date = new Date()
-    Weather.find({_macAddCapt : req.params._macAddCapt , dateOfcomming : date},{_id : 0,temp : 1,humidite : 1}).exec()
+    Weather.find({macAddCapt : req.params.macAddCapt , dateOfcomming : date},{_id : 0,temp : 1,humidite : 1}).exec()
     .then(data => {
         console.log(data.length)
         if(data){

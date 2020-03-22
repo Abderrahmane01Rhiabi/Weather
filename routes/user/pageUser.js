@@ -197,17 +197,17 @@ router.post('/signup', function(req,res){
                     });
                 })
                 }else{
-                    return res.status(200)({
+                    return res.status(200).send({
                         message : "Passwords do not match"
                     });
                 }
             }else{
-                return res.status(200)({
+                return res.status(200).send({
                     message : "Password must be at least 6 characters"
                 });
             }
             }else{
-                return res.status(200)({
+                return res.status(200).send({
                     message : "Please enter all fields"
                 });
             }
