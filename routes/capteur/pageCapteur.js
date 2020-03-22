@@ -266,25 +266,25 @@ router.get('/temp&humi/:macAddCapt/now',(req,res) => {
     });
 })
 
-// router.get("/weather", function(req,res) {
-//     Weather.find({})
-//     .then(function(dbProducts) {
-//       res.json(dbProducts);
-//     })
-//     .catch(function(err) {
-//       res.json(err);
-//     })
-//   });
+router.get("/weather", function(req,res) {
+    Weather.find({}).populate('macAddCapt','macAddr')
+    .then(function(dbProducts) {
+      res.json(dbProducts);
+    })
+    .catch(function(err) {
+      res.json(err);
+    })
+  });
 
-//   router.get("/capteur", function(req,res) {
-//     Capteur.find({})
-//     .then(function(dbReviews) {
-//       res.json(dbReviews);
-//     })
-//     .catch(function(err) {
-//       res.json(err);
-//     })
-//   });  
+  router.get("/capteur", function(req,res) {
+    Capteur.find({})
+    .then(function(dbReviews) {
+      res.json(dbReviews);
+    })
+    .catch(function(err) {
+      res.json(err);
+    })
+  });  
 
 
 router.get("/xxx"  ,(req,res) =>{

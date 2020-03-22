@@ -1,7 +1,7 @@
 const mongoose = require('mongoose'); 
 
 var weatherSchema = new mongoose.Schema({
-        macAddCapt : [{type : mongoose.Schema.Types.Number ,required: true, ref : 'capteur'}],
+        macAddCapt : [{type : mongoose.Schema.Types.ObjectId ,required: true, ref : 'capteur'}],
         dateOfcomming : { type: Date, default: Date.now },
         temp : {type : Number , /*required: true*/},
         humidite : {type : Number , /*required: true*/}
