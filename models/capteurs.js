@@ -1,7 +1,7 @@
 const mongoose = require('mongoose'); 
 
 var capteurSchema = new mongoose.Schema({
-    macAddr : {type : Number, required : true ,unique : true},
+    macAddr : {type : String, required : true ,unique : true},
     name : {type : String, required : true},
     place : {type : String, required : true }
 })
