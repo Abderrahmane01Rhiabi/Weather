@@ -12,16 +12,11 @@ const User = require('../../models/users');
 
 
 router.get('/allDataAdmin',verifyToken,function(req,res){
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     User.find({$or :[{role : 'admin'},{role : 'supperAdmin'}]})
     .then(data =>{
-        if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
             console.log(data);
         res.status(200).json(data)
-    }else{
-        res.status(404).json({
-            message : "I Cant Give You Data You Are Note A Member"
-        })
-    }
     })
     
     .catch(err => {
@@ -29,12 +24,17 @@ router.get('/allDataAdmin',verifyToken,function(req,res){
             error : err
         });
     }) 
+    }else{
+        res.status(404).json({
+            message : "I Cant Give You Data You Are Note A Member"
+        })
+    }
 });
 
 router.get('/dataOfAdmin/:adminId',verifyToken,(req,res) =>{
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     User.find({_id : req.params.adminId}).exec()
     .then(result => {
-        if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
             if(result.length >= 1){
             console.log(result)
             res.status(200).json({result}) 
@@ -43,12 +43,7 @@ router.get('/dataOfAdmin/:adminId',verifyToken,(req,res) =>{
             res.status(404).json({
                 message : "Admin Not Founded"
             })
-        }   
-        }else{
-                res.status(404).json({
-                    message : "I Cant Give You Data You Are Note A Member"
-                })
-            }        
+        }         
     })
     .catch(err => {
         console.log(err);
@@ -56,69 +51,74 @@ router.get('/dataOfAdmin/:adminId',verifyToken,(req,res) =>{
             error : err
         });
     });
+    }else{
+        res.status(404).json({
+            message : "I Cant Give You Data You Are Note A Member"
+        })
+    }  
 });
 
-router.post('/login',(req,res) => {
-    User.findOne({email: req.body.email}).exec()
-    .then(admin => {
-        console.log(admin)
-        if(!admin){
-            res.status(401).json({
-                message : 'Login Failed'
-            });
-        }
-        else{
-        console.log(req.body.password);
-        console.log(admin.password)
-        console.log(req.body.email);
+// router.post('/login',(req,res) => {
+//     User.findOne({email: req.body.email}).exec()
+//     .then(admin => {
+//         console.log(admin)
+//         if(!admin){
+//             res.status(401).json({
+//                 message : 'Login Failed'
+//             });
+//         }
+//         else{
+//         console.log(req.body.password);
+//         console.log(admin.password)
+//         console.log(req.body.email);
         
-        bcrypt.compare(req.body.password, admin.password,(err,result) => {
-            console.log(admin.password)
-            console.log(req.body.password);
-            console.log(result);
+//         bcrypt.compare(req.body.password, admin.password,(err,result) => {
+//             console.log(admin.password)
+//             console.log(req.body.password);
+//             console.log(result);
 
-            if(err){
-                    res.status(401).json({
-                    message : 'Login Failed'
-                });
-            }
-            if(result){
-                const token = jwt.sign(
-                    {
-                    email : admin.email,
-                    _id : admin._id,
-                    role : admin.role
-                    }, secret,
-                    {
-                        expiresIn : "1h"
-                    }
-                )
+//             if(err){
+//                     res.status(401).json({
+//                     message : 'Login Failed'
+//                 });
+//             }
+//             if(result){
+//                 const token = jwt.sign(
+//                     {
+//                     email : admin.email,
+//                     _id : admin._id,
+//                     role : admin.role
+//                     }, secret,
+//                     {
+//                         expiresIn : "1h"
+//                     }
+//                 )
            
-                    console.log(result);
-                    console.log(result);
+//                     console.log(result);
+//                     console.log(result);
 
-                    res.status(200).json({
-                    message : 'Login successful',
-                    token
-                });
-            }
-            if(!result){
-                console.log(result);
-                res.status(400).json({
-                message : 'Login Failed'
-            });
-        }    
-        });
-        }
-    });
+//                     res.status(200).json({
+//                     message : 'Login successful',
+//                     token
+//                 });
+//             }
+//             if(!result){
+//                 console.log(result);
+//                 res.status(400).json({
+//                 message : 'Login Failed'
+//             });
+//         }    
+//         });
+//         }
+//     });
     
-});
+// });
 
 router.delete('/delete/:adminId',verifyToken,(req,res) => {
+    if(res.adminData.role=='supperAdmin'){
     User.remove({_id : req.params.adminId}).exec()
     .then(result => {
         //si le id nexiste pas il va affiche le 2em massage car lenght est >1
-        if(res.adminData.role=='supperAdmin'){
         if(result.deletedCount >= 1){
             console.log(result)
             res.status(200).json({
@@ -130,11 +130,6 @@ router.delete('/delete/:adminId',verifyToken,(req,res) => {
                 message : "Admin Not Founded"
             })
         }
-    }else{
-        res.status(404).json({
-            message : "I Cant Give You Data You Are Note A Member"
-        })
-    }
     })
     .catch(err => {
         console.log(err);
@@ -142,15 +137,20 @@ router.delete('/delete/:adminId',verifyToken,(req,res) => {
             error : err
         });
     });
+    }else{
+        res.status(404).json({
+            message : "I Cant Give You Data You Are Note A Member"
+        })
+    }
 });
 
 
 //=============================================================
 //Code Copier
 router.put('/update/:id',verifyToken,function (req, res, next) {
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     // fetch admin
     User.findById(req.params.id, function(err, post) {
-        if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
         if (err) return next(err);
         if(post){
         if(req.body){
@@ -172,19 +172,19 @@ router.put('/update/:id',verifyToken,function (req, res, next) {
             message : "Not Founded"
         });
     }
+    });
     }else{
         res.status(404).json({
             message : "I Cant Give You Data You Are Note A Member"
         })
     }
-    });
 });
 //=============================================================
     
 router.post('/addAdmin',verifyToken,(req,res) => {
+    if(res.adminData.role=='supperAdmin'){
     User.findOne({email : req.body.email}).exec()
     .then(result => {
-        if(res.adminData.role=='supperAdmin'){
             if(result){
                 console.log(req.body.num)
                 var x =req.body.num;
@@ -194,7 +194,7 @@ router.post('/addAdmin',verifyToken,(req,res) => {
                         result.role = 'admin'
                         result.save(function (err) {
                             if (err) {  res.status(500).json({ message: err.message }); }
-                            res.status(200).json("Be An Admin Now");
+                            res.status(200).json({message : "Be An Admin Now"});
                         });
                         console.log(result)
 
@@ -203,7 +203,7 @@ router.post('/addAdmin',verifyToken,(req,res) => {
                     result.role = 'user'
                     result.save(function (err) {
                         if (err) {  res.status(500).json({ message: err.message }); }
-                        res.status(200).json("Be An User Now");
+                        res.status(200).json({message : "Be An User Now"});
                     });
                         console.log(result)
 
@@ -217,13 +217,13 @@ router.post('/addAdmin',verifyToken,(req,res) => {
                     message : "User Not Founded"
                 })
             }
+        console.log("-----------")
+        console.log(result)
+    })
         }else{
             res.status(404).json({
                 message : "I Cant Give You Data You Are Note A Member"
             })
         }
-        console.log("-----------")
-        console.log(result)
-    })
 })
 module.exports = router;

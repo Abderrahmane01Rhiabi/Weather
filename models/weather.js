@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 var weatherSchema = new mongoose.Schema({
         macAddCapt : {
-                type : mongoose.Schema.Types.String ,
+                type : mongoose.Schema.Types.String  ,
                 required: true,
                 ref : 'capteur'
                 },
