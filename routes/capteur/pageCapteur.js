@@ -54,7 +54,8 @@ router.post('/addCapteur',verifyToken, function(req,res){
                 console.log(req.body.macAddr)
                 var data = {
                         "name" : req.body.name,
-                        "place" : req.body.place,
+                        "place_x" : req.body.place_x,
+                        "place_y" : req.body.place_y,
                         "macAddr" : req.body.macAddr
                         }
                     var newCapt = new Capteur(data);  
