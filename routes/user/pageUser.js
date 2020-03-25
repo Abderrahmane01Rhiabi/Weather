@@ -235,6 +235,7 @@ router.get('/signup/confirmation/:tok',(req,res) => {
             });
         }
             console.log("5")
+            if(token._userId){
             User.findOne({ _id: token._userId}, function (err, user) {
 
                 if (!user){
@@ -256,6 +257,11 @@ router.get('/signup/confirmation/:tok',(req,res) => {
                 res.status(200).send("The account has been verified. Please log in.");
             });
             })
+        }else{
+            res.status(404).json({
+                message : "id null"
+            })
+        }
         })
     })
 
