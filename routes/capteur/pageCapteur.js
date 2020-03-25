@@ -10,7 +10,7 @@ const secret = "secret";
 const Capteur = require('../../models/capteurs');
 const Weather = require('../../models/weather');
 
-router.get('/allDataCapteur',(req,res)=>{
+router.get('/allDataCapteur',verifyToken,(req,res)=>{
     if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
             Capteur.find({}).exec()
             .then(data =>{
