@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 var capteurSchema = new mongoose.Schema({
     macAddr : {type : String, required : true ,unique : true},
     name : {type : String, required : true},
-    place : {type : String, required : true }
+    place : [{
+         x : {type : String, required : true },
+         y : {type : String, required : true }
+    }]
 })
 
 capteurSchema.pre('save',  function(next) {
