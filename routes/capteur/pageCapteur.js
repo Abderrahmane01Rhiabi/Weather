@@ -123,6 +123,7 @@ router.post('/deleteCapteur',(req,res) => {
 router.put('/updateCapteur',function (req, res, next) {
     // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     Capteur.findOne({macAddr : req.body.macAddr}, function(err, post) {
+        if(post){
         if (err) return next(err);
         if(req.body){
         _.assign(post, req.body); 
@@ -133,9 +134,14 @@ router.put('/updateCapteur',function (req, res, next) {
          });
                 // return res.json(200, post);
         })
+        }else{
+            res.status(404).json({
+                message : "No Data Modifye"
+            });
+        }
     }else{
         res.status(404).json({
-            message : "No Data Modifye"
+            message : "Capteur Not Founded"
         });
     }
     });
