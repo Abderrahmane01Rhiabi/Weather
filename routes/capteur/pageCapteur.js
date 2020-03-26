@@ -18,7 +18,7 @@ router.get('/allDataCapteur',(req,res)=>{
     // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
             Capteur.find({}).exec()
             .then(data =>{
-                res.status(200).json({data})
+                res.status(200).json(data)
             })
             .catch(err => {
                 console.log(err);
