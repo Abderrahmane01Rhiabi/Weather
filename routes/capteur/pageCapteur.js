@@ -90,7 +90,7 @@ router.post('/addCapteur', function(req,res){
     // }
 });
 
-router.delete('/deleteCapteur',(req,res) => {
+router.post('/deleteCapteur',(req,res) => {
     // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     Capteur.remove({macAddr : req.body.macAddr}).exec()
     .then(result => {
@@ -166,16 +166,18 @@ router.post('/weatherData/:macAddCapt',(req,res) =>{
                     // Initialization of mqtt client using Thingsboard host and device access token
                     console.log('Connecting to: %s using access token: %s', thingsboardHost, accessToken);
                     var client  = mqtt.connect('mqtt://'+ thingsboardHost, { username: accessToken });
-
+                    console.log('mqtt://'+ thingsboardHost, { username: accessToken })
 
                     // Triggers when client is successfully connected to the Thingsboard server
                     client.on('connect', function () {
                         console.log('Client connected!');
                         client.publish('v1/devices/me/attributes', JSON.stringify({"firmware_version":"1.0.1"}));
-                        console.log('Uploading temperature and humidity data once per second...');
-                        setInterval(publishTelemetry, 1000);
+                        console.log('Uploading temperature and humidity data evry 5 second...');
+                        setInterval(publishTelemetry, 5000);
                     });
-
+                    client.off('disconnect',function(){
+                        console.log('Stop sending data');
+                    })
                     // Uploads telemetry data using 'v1/devices/me/telemetry' MQTT topic
                     function publishTelemetry() {
                         data.temperature = genNextValue(data.temperature, minTemperature, maxTemperature);
