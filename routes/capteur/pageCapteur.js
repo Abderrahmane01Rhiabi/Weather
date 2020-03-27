@@ -245,9 +245,9 @@ router.post('/weatherData/:macAddCapt',(req,res) =>{
                         console.log('Uploading temperature and humidity data evry 5 second...');
                         setInterval(publishTelemetry, 5000);
                     });
-                    client.off('disconnect',function(){
-                        console.log('Stop sending data');
-                    })
+                    // client.off('disconnect',function(){
+                    //     console.log('Stop sending data');
+                    // })
                     // Uploads telemetry data using 'v1/devices/me/telemetry' MQTT topic
                     function publishTelemetry() {
                         data.temperature = genNextValue(data.temperature, minTemperature, maxTemperature);
@@ -342,7 +342,6 @@ router.get('/temp&humi/:macAddCapt/day',(req,res) => {
                     var moy_humi = sum_humi/nbr
 
                         res.status(200).json({
-                            data,
                                 moy_temp,moy_humi
                                 })
                     }else{
@@ -406,7 +405,6 @@ router.get('/temp&humi/:macAddCapt/week',(req,res) => {
                     var moy_humi = sum_humi/nbr
 
                         res.status(200).json({
-                            data,
                                 moy_temp,moy_humi
                                 })
                     }else{
@@ -470,7 +468,6 @@ router.get('/temp&humi/:macAddCapt/month',(req,res) => {
                     var moy_humi = sum_humi/nbr
 
                         res.status(200).json({
-                            data,
                                 moy_temp,moy_humi
                                 })
                     }else{
@@ -507,7 +504,7 @@ router.get('/temp&humi/:macAddCapt/month',(req,res) => {
 
 
 
-router.get('/temp&humi/:macAddCapt/thisDay',(req,res) => {
+router.get('/temp&humi/:macAddCapt/moyThisDay',(req,res) => {
     // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
         var d = new Date()
     var date = new Date(d.getFullYear(),d.getMonth(),d.getDate(),00,59,59)
@@ -535,9 +532,8 @@ router.get('/temp&humi/:macAddCapt/thisDay',(req,res) => {
                     console.log("222")
 
                     res.status(200).json({
-                        data,
                         moy_temp,
-                        moy_humi,
+                        moy_humi
                             })
                 }else{
                     res.status(404).json({
@@ -569,6 +565,56 @@ router.get('/temp&humi/:macAddCapt/thisDay',(req,res) => {
     // })        
     // }
 })
+
+router.get('/temp&humi/:macAddCapt/lastData',(req,res) => {
+    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+        var date = new Date()
+        console.log(date)
+        var datee = new Date(date - (5*1000))
+        console.log(datee)
+    Capteur.findOne({macAddr :  req.params.macAddCapt }).exec()
+    .then(result => {
+        if(result){
+            Weather.find({macAddCapt : req.params.macAddCapt , dateOfcomming : {$gte : datee , $lte : date}}).exec()
+            .then(data => {
+                console.log(data.length)
+                if(data){
+                    console.log("222")
+
+                    res.status(200).json({
+                        data
+                            })
+                }else{
+                    res.status(404).json({
+                        message : "Capteur Is Not Existe"
+                    })
+                }
+            })    
+            .catch(err => {
+                    console.log(err);
+                    res.status(500).json({
+                        error : err
+                    });
+                });        
+        }else{
+            res.status(404).json({
+                message : "Capteur Is Not Existe"
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error : err
+        });
+    });
+    // }else{
+    //     res.status(404).json({
+    //     message : "I Cant Give You Data You Are Not A Member"
+    // })        
+    // }
+})
+
 
 router.get("/allDataWeathers/:macAddr", function(req,res) {
     // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
