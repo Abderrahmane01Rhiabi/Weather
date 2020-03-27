@@ -120,7 +120,7 @@ router.post('/deleteCapteur',(req,res) => {
     // }  
 });
 
-router.put('/updateCapteur',function (req, res, next) {
+router.post('/updateCapteur',function (req, res, next) {
     // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     Capteur.findOne({macAddr : req.body.macAddr}, function(err, post) {
         if(post){
