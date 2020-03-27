@@ -120,6 +120,69 @@ router.post('/deleteCapteur',(req,res) => {
     // }  
 });
 
+// router.delete('/deleteCapteur',(req,res) => {
+//     // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+//     Capteur.remove({macAddr : req.body.macAddr}).exec()
+//     .then(result => {
+//         //si le id nexiste pas il va affiche le 2em massage car lenght est >1
+//         if(result.deletedCount >= 1){
+//             console.log(result)
+//             res.status(200).json({
+//                 message : "Capteur Deleted"
+//             }) 
+//         }else{
+//             console.log(result)
+//             res.status(404).json({
+//                 message : "Capteur Not Founded"
+//             })
+//         }
+//     })
+//     .catch(err => {
+//         console.log(err);
+//         res.status(500).json({
+//             error : err
+//         });
+//     });
+//     // }else{
+//     //     res.status(404).json({
+//     //     message : "I Cant Give You Data You Are Not A Member"
+//     // })    
+//     // }  
+// });
+
+
+// router.put('/updateCapteur',function (req, res, next) {
+//     // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+//     Capteur.findOne({macAddr : req.body.macAddr}, function(err, post) {
+//         if(post){
+//         if (err) return next(err);
+//         if(req.body){
+//         _.assign(post, req.body); 
+//         post.save(function(err) {
+//             if (err) return next(err);
+//          res.status(201).json({
+//              message : "Data Modifye"
+//          });
+//                 // return res.json(200, post);
+//         })
+//         }else{
+//             res.status(404).json({
+//                 message : "No Data Modifye"
+//             });
+//         }
+//     }else{
+//         res.status(404).json({
+//             message : "Capteur Not Founded"
+//         });
+//     }
+//     });
+//     // }else{
+//     //     res.status(404).json({
+//     //         message : "I Cant Give You Data You Are Not A Member"
+//     //     })  
+//     // }
+// });
+
 router.post('/updateCapteur',function (req, res, next) {
     // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     Capteur.findOne({macAddr : req.body.macAddr}, function(err, post) {
@@ -151,6 +214,7 @@ router.post('/updateCapteur',function (req, res, next) {
     //     })  
     // }
 });
+
 
 router.post('/weatherData/:macAddCapt',(req,res) =>{
     Capteur.findOne({macAddr : req.params.macAddCapt }).exec()
