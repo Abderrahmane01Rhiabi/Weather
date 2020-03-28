@@ -14,7 +14,7 @@ const Token = require('../../models/token');
 
 
 //prandre tous les donnee des utilisateurs existe dans la base de donnee
-router.get('/allDataUser',function(req,res){
+router.get('/allDataUser',verifyToken,function(req,res){
     if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     User.find({role : "user"})
     .then(data =>{
