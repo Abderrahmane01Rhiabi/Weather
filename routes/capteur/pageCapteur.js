@@ -214,7 +214,13 @@ router.post('/updateCapteur',function (req, res, next) {
     //     })  
     // }
 });
-
+router.post('/weatherData/finish',(req,res)=> {
+    var client  = mqtt.connect('mqtt://'+ thingsboardHost, { username: accessToken });
+                    console.log('mqtt://'+ thingsboardHost, { username: accessToken })  
+    client.on('close',function(){
+                         console.log('Stop sending data');
+                     })
+})
 
 router.post('/weatherData/:macAddCapt',(req,res) =>{
     Capteur.findOne({macAddr : req.params.macAddCapt }).exec()
@@ -582,7 +588,8 @@ router.get('/temp&humi/:macAddCapt/lastData',(req,res) => {
                     console.log("222")
 
                     res.status(200).json({
-                        data
+                        "temp":data.temp,
+                        "humidite" : data.humidite
                             })
                 }else{
                     res.status(404).json({
