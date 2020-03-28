@@ -15,7 +15,7 @@ const Capteur = require('../../models/capteurs');
 const Weather = require('../../models/weather');
 
 router.get('/allDataCapteur',verifyToken,(req,res)=>{
-    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
             Capteur.find({}).exec()
             .then(data =>{
                 res.status(200).json(data)
@@ -26,15 +26,15 @@ router.get('/allDataCapteur',verifyToken,(req,res)=>{
                     error : err
                 });
             })    
-    }else{
-        res.status(404).json({
-            message : "I Cant Give You Data You Are Not A Member"
-        }) 
-    }
+    // }else{
+    //     res.status(404).json({
+    //         message : "I Cant Give You Data You Are Not A Member"
+    //     }) 
+    // }
 })
 
 router.get('/dataCapteur/:macAddr',verifyToken,(req,res)=>{
-    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
             Capteur.find({macAddr: req.params.macAddr}).exec()
             .then(data =>{
                 res.status(200).json(data)
@@ -45,11 +45,11 @@ router.get('/dataCapteur/:macAddr',verifyToken,(req,res)=>{
                     error : err
                 });
             })    
-    }else{
-        res.status(404).json({
-            message : "I Cant Give You Data You Are Not A Member"
-        }) 
-    }
+    // }else{
+    //     res.status(404).json({
+    //         message : "I Cant Give You Data You Are Not A Member"
+    //     }) 
+    // }
 })
 
 
