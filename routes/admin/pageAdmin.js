@@ -11,8 +11,8 @@ const secret = "secret";
 const User = require('../../models/users');
 
 
-router.get('/allDataAdmin',function(req,res){
-    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+router.get('/allDataAdmin',verifyToken,function(req,res){
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     User.find({$or :[{role : 'admin'},{role : 'supperAdmin'}]})
     .then(data =>{
             console.log(data);
@@ -24,15 +24,15 @@ router.get('/allDataAdmin',function(req,res){
             error : err
         });
     }) 
-    // }else{
-    //     res.status(404).json({
-    //         message : "I Cant Give You Data You Are Note A Member"
-    //     })
-    // }
+    }else{
+        res.status(404).json({
+            message : "I Cant Give You Data You Are Note A Member"
+        })
+    }
 });
 
-router.get('/dataOfAdmin/:adminId',(req,res) =>{
-    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+router.get('/dataOfAdmin/:adminId',verifyToken,(req,res) =>{
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     User.find({_id : req.params.adminId}).exec()
     .then(result => {
             if(result.length >= 1){
@@ -51,11 +51,11 @@ router.get('/dataOfAdmin/:adminId',(req,res) =>{
             error : err
         });
     });
-    // }else{
-    //     res.status(404).json({
-    //         message : "I Cant Give You Data You Are Note A Member"
-    //     })
-    // }  
+    }else{
+        res.status(404).json({
+            message : "I Cant Give You Data You Are Note A Member"
+        })
+    }  
 });
 
 // router.post('/login',(req,res) => {
@@ -114,8 +114,8 @@ router.get('/dataOfAdmin/:adminId',(req,res) =>{
     
 // });
 
-router.delete('/delete/:adminId',(req,res) => {
-    // if(res.adminData.role=='supperAdmin'){
+router.delete('/delete/:adminId',verifyToken,(req,res) => {
+    if(res.adminData.role=='supperAdmin'){
     User.remove({_id : req.params.adminId}).exec()
     .then(result => {
         //si le id nexiste pas il va affiche le 2em massage car lenght est >1
@@ -137,18 +137,18 @@ router.delete('/delete/:adminId',(req,res) => {
             error : err
         });
     });
-    // }else{
-    //     res.status(404).json({
-    //         message : "I Cant Give You Data You Are Note A Member"
-    //     })
-    // }
+    }else{
+        res.status(404).json({
+            message : "I Cant Give You Data You Are Note A Member"
+        })
+    }
 });
 
 
 //=============================================================
 //Code Copier
-router.put('/update/:id',function (req, res, next) {
-    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+router.put('/update/:id',verifyToken,function (req, res, next) {
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     // fetch admin
     User.findById(req.params.id, function(err, post) {
         if (err) return next(err);
@@ -173,16 +173,16 @@ router.put('/update/:id',function (req, res, next) {
         });
     }
     });
-    // }else{
-    //     res.status(404).json({
-    //         message : "I Cant Give You Data You Are Note A Member"
-    //     })
-    // }
+    }else{
+        res.status(404).json({
+            message : "I Cant Give You Data You Are Note A Member"
+        })
+    }
 });
 //=============================================================
     
-router.post('/addAdmin',(req,res) => {
-    // if(res.adminData.role=='supperAdmin'){
+router.post('/addAdmin',verifyToken,(req,res) => {
+    if(res.adminData.role=='supperAdmin'){
     User.findOne({email : req.body.email}).exec()
     .then(result => {
             if(result){
@@ -220,10 +220,10 @@ router.post('/addAdmin',(req,res) => {
         console.log("-----------")
         console.log(result)
     })
-        // }else{
-        //     res.status(404).json({
-        //         message : "I Cant Give You Data You Are Note A Member"
-        //     })
-        // }
+        }else{
+            res.status(404).json({
+                message : "I Cant Give You Data You Are Note A Member"
+            })
+        }
 })
 module.exports = router;

@@ -34,7 +34,7 @@ router.get('/allDataUser',verifyToken,function(req,res){
 });
 
 //prandre tous les donnee d'un utilisateur 
-router.get('/dataOfuser/:userId',(req,res) =>{
+router.get('/dataOfuser/:userId',verifyToken,(req,res) =>{
     if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     User.find({_id : req.params.userId}).exec()
     .then(result => {
@@ -266,7 +266,7 @@ router.get('/signup/confirmation/:tok',(req,res) => {
     })
 
 
-router.delete('/delete/:userId',(req,res) => {
+router.delete('/delete/:userId',verifyToken,(req,res) => {
     if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     User.remove({_id : req.params.userId}).exec()
     .then(result => {
