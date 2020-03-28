@@ -33,6 +33,26 @@ router.get('/allDataCapteur',verifyToken,(req,res)=>{
     }
 })
 
+router.get('/dataCapteur/:macAddr',verifyToken,(req,res)=>{
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+            Capteur.find({macAddr: req.params.macAddr}).exec()
+            .then(data =>{
+                res.status(200).json(data)
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    error : err
+                });
+            })    
+    }else{
+        res.status(404).json({
+            message : "I Cant Give You Data You Are Not A Member"
+        }) 
+    }
+})
+
+
 router.post('/addCapteur',verifyToken, function(req,res){
     if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     console.log('1')
@@ -214,13 +234,6 @@ router.post('/updateCapteur',verifyToken,function (req, res, next) {
         })  
     }
 });
-router.post('/weatherData/finish',(req,res)=> {
-    var client  = mqtt.connect('mqtt://'+ thingsboardHost, { username: accessToken });
-                    console.log('mqtt://'+ thingsboardHost, { username: accessToken })  
-    client.on('close',function(){
-                         console.log('Stop sending data');
-                     })
-})
 
 router.post('/weatherData/:macAddCapt',(req,res) =>{
     Capteur.findOne({macAddr : req.params.macAddCapt }).exec()
@@ -231,35 +244,35 @@ router.post('/weatherData/:macAddCapt',(req,res) =>{
                 });
             }
             else{
-                    const minTemperature = 17.5, maxTemperature = 30, minHumidity = 12, maxHumidity = 90;
+                    // const minTemperature = 17.5, maxTemperature = 30, minHumidity = 12, maxHumidity = 90;
 
-                    // Initialization of temperature and humidity data with random values
-                    var data = {
-                        temperature: minTemperature + (maxTemperature - minTemperature) * Math.random() ,
-                        humidity: minHumidity + (maxHumidity - minHumidity) * Math.random()
-                    };
+                    // // Initialization of temperature and humidity data with random values
+                    // var data = {
+                    //     temperature: minTemperature + (maxTemperature - minTemperature) * Math.random() ,
+                    //     humidity: minHumidity + (maxHumidity - minHumidity) * Math.random()
+                    // };
 
-                    // Initialization of mqtt client using Thingsboard host and device access token
-                    console.log('Connecting to: %s using access token: %s', thingsboardHost, accessToken);
-                    var client  = mqtt.connect('mqtt://'+ thingsboardHost, { username: accessToken });
-                    console.log('mqtt://'+ thingsboardHost, { username: accessToken })
+                    // // Initialization of mqtt client using Thingsboard host and device access token
+                    // console.log('Connecting to: %s using access token: %s', thingsboardHost, accessToken);
+                    // var client  = mqtt.connect('mqtt://'+ thingsboardHost, { username: accessToken });
+                    // console.log('mqtt://'+ thingsboardHost, { username: accessToken })
 
-                    // Triggers when client is successfully connected to the Thingsboard server
-                    client.on('connect', function () {
-                        console.log('Client connected!');
-                        client.publish('v1/devices/me/attributes', JSON.stringify({"firmware_version":"1.0.1"}));
-                        console.log('Uploading temperature and humidity data evry 5 second...');
-                        setInterval(publishTelemetry, 5000);
-                    });
-                    // client.off('disconnect',function(){
-                    //     console.log('Stop sending data');
-                    // })
-                    // Uploads telemetry data using 'v1/devices/me/telemetry' MQTT topic
-                    function publishTelemetry() {
-                        data.temperature = genNextValue(data.temperature, minTemperature, maxTemperature);
-                        data.humidity = genNextValue(data.humidity, minHumidity, maxHumidity);
-                        client.publish('v1/devices/me/telemetry', JSON.stringify(data));
-                        console.log('v1/devices/me/telemetry', JSON.stringify(data))
+                    // // Triggers when client is successfully connected to the Thingsboard server
+                    // client.on('connect', function () {
+                    //     console.log('Client connected!');
+                    //     client.publish('v1/devices/me/attributes', JSON.stringify({"firmware_version":"1.0.1"}));
+                    //     console.log('Uploading temperature and humidity data evry 5 second...');
+                    //     setInterval(publishTelemetry, 5000);
+                    // });
+                    // // client.off('disconnect',function(){
+                    // //     console.log('Stop sending data');
+                    // // })
+                    // // Uploads telemetry data using 'v1/devices/me/telemetry' MQTT topic
+                    // function publishTelemetry() {
+                    //     data.temperature = genNextValue(data.temperature, minTemperature, maxTemperature);
+                    //     data.humidity = genNextValue(data.humidity, minHumidity, maxHumidity);
+                    //     client.publish('v1/devices/me/telemetry', JSON.stringify(data));
+                    //     console.log('v1/devices/me/telemetry', JSON.stringify(data))
                         var d = {
                             "temp" : data.temperature,
                             "humidite" : data.humidity,
@@ -282,48 +295,47 @@ router.post('/weatherData/:macAddCapt',(req,res) =>{
 
                     }
 
-                    // Generates new random value that is within 3% range from previous value
-                    function genNextValue(prevValue, min, max) {
-                        var value = prevValue + ((max - min) * (Math.random() - 0.5)) * 0.03;
-                        value = Math.max(min, Math.min(max, value));
-                        return Math.round(value * 10) / 10;
-                    }
+//                     // Generates new random value that is within 3% range from previous value
+//                     function genNextValue(prevValue, min, max) {
+//                         var value = prevValue + ((max - min) * (Math.random() - 0.5)) * 0.03;
+//                         value = Math.max(min, Math.min(max, value));
+//                         return Math.round(value * 10) / 10;
+//                     }
 
-                    //Catches ctrl+c event
-                    process.on('SIGINT', function () {
-                        console.log();
-                        console.log('Disconnecting...');
-                        client.end();
-                        // res.status(200).json({
-                        //     message : "data arrive"
-                        // })
-                        console.log('Exited!');
-                        process.exit(2);
-                    });
+//                     //Catches ctrl+c event
+//                     process.on('SIGINT', function () {
+//                         console.log();
+//                         console.log('Disconnecting...');
+//                         client.end();
+//                         // res.status(200).json({
+//                         //     message : "data arrive"
+//                         // })
+//                         console.log('Exited!');
+//                         process.exit(2);
+//                     });
 
-                    //Catches uncaught exceptions
-                    process.on('uncaughtException', function(e) {
-                        console.log('Uncaught Exception...');
-                        console.log(e.stack);
-                        process.exit(99);
-                    });
-                // var data = {
-                //     "macAddCapt" : req.params.macAddCapt,
-                //     "temp" : req.params.temp,
-                //     "humidite" : req.params.humi 
-                // }
-                // var newData = new Weather(data)
-            }
-    }).catch(err =>{
-         res.status(500).json({
-            error : err
-        });
-    })
-})
+//                     //Catches uncaught exceptions
+//                     process.on('uncaughtException', function(e) {
+//                         console.log('Uncaught Exception...');
+//                         console.log(e.stack);
+//                         process.exit(99);
+//                     });
+//                 // var data = {
+//                 //     "macAddCapt" : req.params.macAddCapt,
+//                 //     "temp" : req.params.temp,
+//                 //     "humidite" : req.params.humi 
+//                 // }
+//                 // var newData = new Weather(data)
+//             }
+//     }).catch(err =>{
+//          res.status(500).json({
+//             error : err
+//         });
+     })
+ })
 
 router.get('/temp&humi/:macAddCapt/day',verifyToken,(req,res) => {
     if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
-
     var d = new Date()
     var date = new Date(d.getFullYear(),d.getMonth(),d.getDate(),00,59,59)
     console.log(date)
