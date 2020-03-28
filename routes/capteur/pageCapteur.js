@@ -588,7 +588,7 @@ router.get('/temp&humi/:macAddCapt/lastData',(req,res) => {
     // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
         var date = new Date()
         console.log(date)
-        var datee = new Date(date - (5*1000))
+        var datee = new Date(date - (10*60*1000))
         console.log(datee)
     Capteur.findOne({macAddr :  req.params.macAddCapt }).exec()
     .then(result => {
@@ -599,10 +599,7 @@ router.get('/temp&humi/:macAddCapt/lastData',(req,res) => {
                 if(data){
                     console.log("222")
 
-                    res.status(200).json(
-                        data.temp,
-                         data.humidite
-                            )
+                    res.status(200).json(data)
                 }else{
                     res.status(404).json({
                         message : "Capteur Is Not Existe"
@@ -666,6 +663,181 @@ router.get("/allDataWeathers/:macAddr",verifyToken, function(req,res) {
     })        
     }
 });
+
+router.get('/temp&humi/:macAddCapt/maxTemp',(req,res) => {
+    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    Capteur.findOne({macAddr :  req.params.macAddCapt }).exec()
+    .then(result => {
+        if(result){
+            Weather.find({macAddCapt : req.params.macAddCapt}).sort({temp : -1}).limit(1).exec()
+            .then(data => {
+                console.log(data.length)
+                if(data){
+                    console.log("222")
+
+                    res.status(200).json(data)
+                }else{
+                    res.status(404).json({
+                        message : "Capteur Is Not Existe"
+                    })
+                }
+            })    
+            .catch(err => {
+                    console.log(err);
+                    res.status(500).json({
+                        error : err
+                    });
+                });        
+        }else{
+            res.status(404).json({
+                message : "Capteur Is Not Existe"
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error : err
+        });
+    });
+    // }else{
+    //     res.status(404).json({
+    //     message : "I Cant Give You Data You Are Not A Member"
+    // })        
+    // }
+})
+
+router.get('/temp&humi/:macAddCapt/minTemp',(req,res) => {
+    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    Capteur.findOne({macAddr :  req.params.macAddCapt }).exec()
+    .then(result => {
+        if(result){
+            Weather.find({macAddCapt : req.params.macAddCapt}).sort({temp : +1}).limit(1).exec()
+            .then(data => {
+                console.log(data.length)
+                if(data){
+                    console.log("222")
+
+                    res.status(200).json(data)
+                }else{
+                    res.status(404).json({
+                        message : "Capteur Is Not Existe"
+                    })
+                }
+            })    
+            .catch(err => {
+                    console.log(err);
+                    res.status(500).json({
+                        error : err
+                    });
+                });        
+        }else{
+            res.status(404).json({
+                message : "Capteur Is Not Existe"
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error : err
+        });
+    });
+    // }else{
+    //     res.status(404).json({
+    //     message : "I Cant Give You Data You Are Not A Member"
+    // })        
+    // }
+})
+
+
+
+router.get('/temp&humi/:macAddCapt/minhumi',(req,res) => {
+    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    Capteur.findOne({macAddr :  req.params.macAddCapt }).exec()
+    .then(result => {
+        if(result){
+            Weather.find({macAddCapt : req.params.macAddCapt}).sort({humidite : +1}).limit(1).exec()
+            .then(data => {
+                console.log(data.length)
+                if(data){
+                    console.log("222")
+
+                    res.status(200).json(data)
+                }else{
+                    res.status(404).json({
+                        message : "Capteur Is Not Existe"
+                    })
+                }
+            })    
+            .catch(err => {
+                    console.log(err);
+                    res.status(500).json({
+                        error : err
+                    });
+                });        
+        }else{
+            res.status(404).json({
+                message : "Capteur Is Not Existe"
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error : err
+        });
+    });
+    // }else{
+    //     res.status(404).json({
+    //     message : "I Cant Give You Data You Are Not A Member"
+    // })        
+    // }
+})
+
+
+router.get('/temp&humi/:macAddCapt/maxhumi',(req,res) => {
+    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    Capteur.findOne({macAddr :  req.params.macAddCapt }).exec()
+    .then(result => {
+        if(result){
+            Weather.find({macAddCapt : req.params.macAddCapt}).sort({humidite : -1}).limit(1).exec()
+            .then(data => {
+                console.log(data.length)
+                if(data){
+                    console.log("222")
+
+                    res.status(200).json(data)
+                }else{
+                    res.status(404).json({
+                        message : "Capteur Is Not Existe"
+                    })
+                }
+            })    
+            .catch(err => {
+                    console.log(err);
+                    res.status(500).json({
+                        error : err
+                    });
+                });        
+        }else{
+            res.status(404).json({
+                message : "Capteur Is Not Existe"
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({
+            error : err
+        });
+    });
+    // }else{
+    //     res.status(404).json({
+    //     message : "I Cant Give You Data You Are Not A Member"
+    // })        
+    // }
+})
 
 
 router.get("/xxx"  ,(req,res) =>{

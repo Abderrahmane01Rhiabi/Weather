@@ -15,7 +15,7 @@ const Token = require('../../models/token');
 
 //prandre tous les donnee des utilisateurs existe dans la base de donnee
 router.get('/allDataUser',function(req,res){
-    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     User.find({role : "user"})
     .then(data =>{
             console.log(data);
@@ -26,16 +26,16 @@ router.get('/allDataUser',function(req,res){
             error : err
         });
     }) 
-    // }else{
-    //     return res.status(404).json({
-    //         message : "I Cant Give You Data You Are Not A Member"
-    //     })
-    // }
+    }else{
+        return res.status(404).json({
+            message : "I Cant Give You Data You Are Not A Member"
+        })
+    }
 });
 
 //prandre tous les donnee d'un utilisateur 
 router.get('/dataOfuser/:userId',(req,res) =>{
-    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     User.find({_id : req.params.userId}).exec()
     .then(result => {
         console.log(res.adminData.email)
@@ -55,11 +55,11 @@ router.get('/dataOfuser/:userId',(req,res) =>{
             error : err
         });
     });
-    // }else{
-    //     res.status(404).json({
-    //         message : "I Cant Give You Data You Are Not A Member"
-    //     })
-    // }
+    }else{
+        res.status(404).json({
+            message : "I Cant Give You Data You Are Not A Member"
+        })
+    }
 });
 
 //test si le user peut acceder 
@@ -100,7 +100,7 @@ router.post('/login', (req,res) => {
                     role : user.role
                     }, secret,
                     {
-                        expiresIn : "1h"
+                        expiresIn : "12h"
                     }
                 )
                     console.log(result);
@@ -267,7 +267,7 @@ router.get('/signup/confirmation/:tok',(req,res) => {
 
 
 router.delete('/delete/:userId',(req,res) => {
-    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
     User.remove({_id : req.params.userId}).exec()
     .then(result => {
         //si le id nexiste pas il va affiche le 2em massage car lenght est >1
@@ -288,11 +288,11 @@ router.delete('/delete/:userId',(req,res) => {
             error : err
         });
     });
-    // }else{
-    //     res.status(404).json({
-    //     message : "I Cant Give You Data You Are Not A Member"
-    // })        
-    // }
+    }else{
+        res.status(404).json({
+        message : "I Cant Give You Data You Are Not A Member"
+    })        
+    }
 });
 
 /*
