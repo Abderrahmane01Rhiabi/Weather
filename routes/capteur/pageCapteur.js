@@ -370,7 +370,7 @@ router.get('/temp&humi/:macAddCapt/day',verifyToken,(req,res) => {
                                 })
                     }else{
                         res.status(404).json({
-                            message : "Capteur Is Not Existe"
+                            message : "No Data Existe"
                         })
                     }
                 })    
@@ -433,7 +433,7 @@ router.get('/temp&humi/:macAddCapt/week',verifyToken,(req,res) => {
                                 })
                     }else{
                         res.status(404).json({
-                            message : "Capteur Is Not Existe"
+                            message : "No Data Existe"
                         })
                     }
                 })    
@@ -481,6 +481,7 @@ router.get('/temp&humi/:macAddCapt/month',verifyToken,(req,res) => {
                 .then(data => {
                     if(data){
                         console.log(data.length)
+
                         var nbr = data.length;
                         var sum_temp = 0,
                             sum_humi = 0;
@@ -495,8 +496,9 @@ router.get('/temp&humi/:macAddCapt/month',verifyToken,(req,res) => {
                                 moy_temp,moy_humi
                                 })
                     }else{
+
                         res.status(404).json({
-                            message : "Capteur Is Not Existe"
+                            message : "No Data Existe"
                         })
                     }
                 })    
@@ -541,7 +543,6 @@ router.get('/temp&humi/:macAddCapt/moyThisDay',verifyToken,(req,res) => {
         if(result){
             Weather.find({macAddCapt : req.params.macAddCapt , dateOfcomming : {$gte : date , $lte : datee}},{_id : 0,temp : 1,humidite : 1}).exec()
             .then(data => {
-                console.log(data.length)
                 var nbr = data.length;
                 var sum_temp = 0,
                     sum_humi = 0;
@@ -553,6 +554,7 @@ router.get('/temp&humi/:macAddCapt/moyThisDay',verifyToken,(req,res) => {
             var moy_humi = sum_humi/nbr
 
                 if(data){
+                                    console.log(data.length)
                     console.log("222")
 
                     res.status(200).json({
@@ -561,7 +563,7 @@ router.get('/temp&humi/:macAddCapt/moyThisDay',verifyToken,(req,res) => {
                             })
                 }else{
                     res.status(404).json({
-                        message : "Capteur Is Not Existe"
+                        message : "No Data Existe"
                     })
                 }
             })    
@@ -590,7 +592,7 @@ router.get('/temp&humi/:macAddCapt/moyThisDay',verifyToken,(req,res) => {
     }
 })
 
-router.get('/temp&humi/:macAddCapt/lastData',(req,res) => {
+router.get('/temp&humi/:macAddCapt/lastData',verifyToken,(req,res) => {
     if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
         var date = new Date()
         console.log(date)
@@ -599,16 +601,16 @@ router.get('/temp&humi/:macAddCapt/lastData',(req,res) => {
     Capteur.findOne({macAddr :  req.params.macAddCapt }).exec()
     .then(result => {
         if(result){
-            Weather.find({macAddCapt : req.params.macAddCapt , dateOfcomming : {$gte : datee , $lte : date}}).exec()
+            Weather.findOne({macAddCapt : req.params.macAddCapt},[] ,{ $orderby : { 'dateOfcomming' : -1 }}).exec()
             .then(data => {
-                console.log(data.length)
                 if(data){
+                    console.log(data.length)
                     console.log("222")
 
                     res.status(200).json(data)
                 }else{
                     res.status(404).json({
-                        message : "Capteur Is Not Existe"
+                        message : "No Data existe"
                     })
                 }
             })    
@@ -670,21 +672,22 @@ router.get("/allDataWeathers/:macAddr",verifyToken, function(req,res) {
     }
 });
 
-router.get('/temp&humi/:macAddCapt/maxTemp',(req,res) => {
+router.get('/temp&humi/:macAddCapt/maxTemp',verifyToken,(req,res) => {
     if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
     Capteur.findOne({macAddr :  req.params.macAddCapt }).exec()
     .then(result => {
         if(result){
             Weather.find({macAddCapt : req.params.macAddCapt}).sort({temp : -1}).limit(1).exec()
             .then(data => {
-                console.log(data.length)
                 if(data){
+                                    console.log(data.length)
+
                     console.log("222")
 
                     res.status(200).json(data)
                 }else{
                     res.status(404).json({
-                        message : "Capteur Is Not Existe"
+                        message : "No Data Existe"
                     })
                 }
             })    
@@ -713,7 +716,7 @@ router.get('/temp&humi/:macAddCapt/maxTemp',(req,res) => {
     }
 })
 
-router.get('/temp&humi/:macAddCapt/minTemp',(req,res) => {
+router.get('/temp&humi/:macAddCapt/minTemp',verifyToken,(req,res) => {
     if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
     Capteur.findOne({macAddr :  req.params.macAddCapt }).exec()
     .then(result => {
@@ -727,7 +730,7 @@ router.get('/temp&humi/:macAddCapt/minTemp',(req,res) => {
                     res.status(200).json(data)
                 }else{
                     res.status(404).json({
-                        message : "Capteur Is Not Existe"
+                        message : "No Data Existe"
                     })
                 }
             })    
@@ -758,21 +761,21 @@ router.get('/temp&humi/:macAddCapt/minTemp',(req,res) => {
 
 
 
-router.get('/temp&humi/:macAddCapt/minhumi',(req,res) => {
+router.get('/temp&humi/:macAddCapt/minHumi',verifyToken,(req,res) => {
     if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
     Capteur.findOne({macAddr :  req.params.macAddCapt }).exec()
     .then(result => {
         if(result){
             Weather.find({macAddCapt : req.params.macAddCapt}).sort({humidite : +1}).limit(1).exec()
             .then(data => {
-                console.log(data.length)
-                if(data){
+                if(data){   
+                                 console.log(data.length)
                     console.log("222")
 
                     res.status(200).json(data)
                 }else{
                     res.status(404).json({
-                        message : "Capteur Is Not Existe"
+                        message : "No Data Existe"
                     })
                 }
             })    
@@ -802,21 +805,21 @@ router.get('/temp&humi/:macAddCapt/minhumi',(req,res) => {
 })
 
 
-router.get('/temp&humi/:macAddCapt/maxhumi',(req,res) => {
+router.get('/temp&humi/:macAddCapt/maxHumi',verifyToken,(req,res) => {
     if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
     Capteur.findOne({macAddr :  req.params.macAddCapt }).exec()
     .then(result => {
         if(result){
             Weather.find({macAddCapt : req.params.macAddCapt}).sort({humidite : -1}).limit(1).exec()
             .then(data => {
-                console.log(data.length)
                 if(data){
+                    console.log(data.length)
                     console.log("222")
 
                     res.status(200).json(data)
                 }else{
                     res.status(404).json({
-                        message : "Capteur Is Not Existe"
+                        message : "No Data Existe"
                     })
                 }
             })    
