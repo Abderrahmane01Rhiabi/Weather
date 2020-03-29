@@ -41,7 +41,7 @@ router.get('/dataOfuser/:userId',verifyToken,(req,res) =>{
         console.log(res.adminData.email)
             if(result.length >= 1){
             console.log(result)
-            return res.status(200).json({result}) 
+            res.status(200).json(result) 
         }else{
             console.log(result)
              res.status(404).json({
@@ -61,6 +61,35 @@ router.get('/dataOfuser/:userId',verifyToken,(req,res) =>{
         })
     }
 });
+
+router.get('/myData',verifyToken,(req,res) =>{
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
+    User.find({_id : res.adminData._id}).exec()
+    .then(result => {
+        console.log(res.adminData.email)
+            if(result.length >= 1){
+            console.log(result)
+            res.status(200).json(result) 
+        }else{
+            console.log(result)
+             res.status(404).json({
+                message : "User Not Founded"
+            })
+        }
+    })
+    .catch(err => {
+        console.log(err);
+         res.status(500).json({
+            error : err
+        });
+    });
+    }else{
+        res.status(404).json({
+            message : "I Cant Give You Data You Are Not A Member"
+        })
+    }
+});
+
 
 //test si le user peut acceder 
 router.post('/login', (req,res) => {
@@ -266,9 +295,9 @@ router.get('/signup/confirmation/:tok',(req,res) => {
     })
 
 
-router.delete('/delete/:userId',verifyToken,(req,res) => {
-    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
-    User.remove({_id : req.params.userId}).exec()
+router.delete('/delete',verifyToken,(req,res) => {
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user' ){
+    User.remove({_id : res.adminData._id}).exec()
     .then(result => {
         //si le id nexiste pas il va affiche le 2em massage car lenght est >1
             if(result.deletedCount == 1){
@@ -344,10 +373,11 @@ function verifyToken (req,res,next){
 //=============================================================
 //Code Copier
 //pour la verification de token je sais pas###############
-router.put('/update/:id',function (req, res, next) {
+router.put('/update',verifyToken,function (req, res, next) {
     // fetch user
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user' ){
     console.log(req.params.id)
-    User.findById(req.params.id, function(err, post) {
+    User.findById(res.adminData._id, function(err, post) {
         if (err) return next(err);
         if(post){
         if(req.body){
@@ -370,6 +400,11 @@ router.put('/update/:id',function (req, res, next) {
         });
     }
     });
+    }else{
+        res.status(404).json({
+        message : "I Cant Give You Data You Are Not A Member"
+    })        
+    }
 });
 //=============================================================
 

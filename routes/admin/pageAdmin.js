@@ -12,7 +12,7 @@ const User = require('../../models/users');
 
 
 router.get('/allDataAdmin',verifyToken,function(req,res){
-    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    if(res.adminData.role=='supperAdmin'){
     User.find({$or :[{role : 'admin'},{role : 'supperAdmin'}]})
     .then(data =>{
             console.log(data);
@@ -32,18 +32,26 @@ router.get('/allDataAdmin',verifyToken,function(req,res){
 });
 
 router.get('/dataOfAdmin/:adminId',verifyToken,(req,res) =>{
-    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
-    User.find({_id : req.params.adminId}).exec()
+    if(res.adminData.role=='supperAdmin'){
+    User.findOne({_id : req.params.adminId}).exec()
     .then(result => {
-            if(result.length >= 1){
+            if(result){
+            if(result.role=="admin"){
             console.log(result)
-            res.status(200).json({result}) 
+            res.status(200).json(result)
+            }else{
+                res.status(404).json({
+                    message : "It Not An admin is User",
+                    result
+                })
+            }  
         }else{
             console.log(result)
             res.status(404).json({
                 message : "Admin Not Founded"
             })
-        }         
+        } 
+           
     })
     .catch(err => {
         console.log(err);
@@ -147,38 +155,38 @@ router.delete('/delete/:adminId',verifyToken,(req,res) => {
 
 //=============================================================
 //Code Copier
-router.put('/update/:id',verifyToken,function (req, res, next) {
-    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
-    // fetch admin
-    User.findById(req.params.id, function(err, post) {
-        if (err) return next(err);
-        if(post){
-        if(req.body){
-        _.assign(post, req.body); 
-        post.save(function(err) {
-            if (err) return next(err);
-         res.status(201).json({
-             message : "Data Modifye"
-         });
-                // return res.json(200, post);
-        })
-    }else{
-        res.status(201).json({
-            message : "No Data Modifye"
-        });
-    }
-    }else{
-        res.status(201).json({
-            message : "Not Founded"
-        });
-    }
-    });
-    }else{
-        res.status(404).json({
-            message : "I Cant Give You Data You Are Note A Member"
-        })
-    }
-});
+// router.put('/update/:id',verifyToken,function (req, res, next) {
+//     if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+//     // fetch admin
+//     User.findById(req.params.id, function(err, post) {
+//         if (err) return next(err);
+//         if(post){
+//         if(req.body){
+//         _.assign(post, req.body); 
+//         post.save(function(err) {
+//             if (err) return next(err);
+//          res.status(201).json({
+//              message : "Data Modifye"
+//          });
+//                 // return res.json(200, post);
+//         })
+//     }else{
+//         res.status(201).json({
+//             message : "No Data Modifye"
+//         });
+//     }
+//     }else{
+//         res.status(201).json({
+//             message : "Not Founded"
+//         });
+//     }
+//     });
+//     }else{
+//         res.status(404).json({
+//             message : "I Cant Give You Data You Are Note A Member"
+//         })
+//     }
+// });
 //=============================================================
     
 router.post('/addAdmin',verifyToken,(req,res) => {

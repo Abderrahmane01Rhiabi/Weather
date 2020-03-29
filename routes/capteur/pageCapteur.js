@@ -15,7 +15,7 @@ const Capteur = require('../../models/capteurs');
 const Weather = require('../../models/weather');
 
 router.get('/allDataCapteur',verifyToken,(req,res)=>{
-    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
             Capteur.find({}).exec()
             .then(data =>{
                 res.status(200).json(data)
@@ -26,18 +26,24 @@ router.get('/allDataCapteur',verifyToken,(req,res)=>{
                     error : err
                 });
             })    
-    // }else{
-    //     res.status(404).json({
-    //         message : "I Cant Give You Data You Are Not A Member"
-    //     }) 
-    // }
+    }else{
+        res.status(404).json({
+            message : "I Cant Give You Data You Are Not A Member"
+        }) 
+    }
 })
 
 router.get('/dataCapteur/:macAddr',verifyToken,(req,res)=>{
-    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
-            Capteur.find({macAddr: req.params.macAddr}).exec()
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
+            Capteur.findOne({macAddr: req.params.macAddr}).exec()
             .then(data =>{
+                if(data){
                 res.status(200).json(data)
+                }else{
+                    res.status(404).json({
+                        message : "Capteur Not Founded"
+                    })
+                }
             })
             .catch(err => {
                 console.log(err);
@@ -45,11 +51,11 @@ router.get('/dataCapteur/:macAddr',verifyToken,(req,res)=>{
                     error : err
                 });
             })    
-    // }else{
-    //     res.status(404).json({
-    //         message : "I Cant Give You Data You Are Not A Member"
-    //     }) 
-    // }
+    }else{
+        res.status(404).json({
+            message : "I Cant Give You Data You Are Not A Member"
+        }) 
+    }
 })
 
 
@@ -335,7 +341,7 @@ router.post('/weatherData/:macAddCapt',(req,res) =>{
  })
 
 router.get('/temp&humi/:macAddCapt/day',verifyToken,(req,res) => {
-    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
     var d = new Date()
     var date = new Date(d.getFullYear(),d.getMonth(),d.getDate(),00,59,59)
     console.log(date)
@@ -397,7 +403,7 @@ router.get('/temp&humi/:macAddCapt/day',verifyToken,(req,res) => {
 
 
 router.get('/temp&humi/:macAddCapt/week',verifyToken,(req,res) => {
-    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
 
     var d = new Date()
     var date = new Date(d.getFullYear(),d.getMonth(),d.getDate(),00,59,59)
@@ -460,7 +466,7 @@ router.get('/temp&humi/:macAddCapt/week',verifyToken,(req,res) => {
 
 
 router.get('/temp&humi/:macAddCapt/month',verifyToken,(req,res) => {
-    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){ 
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){ 
     var d = new Date()
     var date = new Date(d.getFullYear(),d.getMonth(),d.getDate(),00,59,59)
     console.log(date)
@@ -523,7 +529,7 @@ router.get('/temp&humi/:macAddCapt/month',verifyToken,(req,res) => {
 
 
 router.get('/temp&humi/:macAddCapt/moyThisDay',verifyToken,(req,res) => {
-    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
         var d = new Date()
     var date = new Date(d.getFullYear(),d.getMonth(),d.getDate(),00,59,59)
     console.log(date)
@@ -585,7 +591,7 @@ router.get('/temp&humi/:macAddCapt/moyThisDay',verifyToken,(req,res) => {
 })
 
 router.get('/temp&humi/:macAddCapt/lastData',(req,res) => {
-    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
         var date = new Date()
         console.log(date)
         var datee = new Date(date - (10*60*1000))
@@ -624,16 +630,16 @@ router.get('/temp&humi/:macAddCapt/lastData',(req,res) => {
             error : err
         });
     });
-    // }else{
-    //     res.status(404).json({
-    //     message : "I Cant Give You Data You Are Not A Member"
-    // })        
-    // }
+    }else{
+        res.status(404).json({
+        message : "I Cant Give You Data You Are Not A Member"
+    })        
+    }
 })
 
 
 router.get("/allDataWeathers/:macAddr",verifyToken, function(req,res) {
-    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
     Capteur.findOne({macAddr : req.params.macAddr}).exec()
     .then(result => {
     if(result){
@@ -665,7 +671,7 @@ router.get("/allDataWeathers/:macAddr",verifyToken, function(req,res) {
 });
 
 router.get('/temp&humi/:macAddCapt/maxTemp',(req,res) => {
-    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
     Capteur.findOne({macAddr :  req.params.macAddCapt }).exec()
     .then(result => {
         if(result){
@@ -700,15 +706,15 @@ router.get('/temp&humi/:macAddCapt/maxTemp',(req,res) => {
             error : err
         });
     });
-    // }else{
-    //     res.status(404).json({
-    //     message : "I Cant Give You Data You Are Not A Member"
-    // })        
-    // }
+    }else{
+        res.status(404).json({
+        message : "I Cant Give You Data You Are Not A Member"
+    })        
+    }
 })
 
 router.get('/temp&humi/:macAddCapt/minTemp',(req,res) => {
-    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
     Capteur.findOne({macAddr :  req.params.macAddCapt }).exec()
     .then(result => {
         if(result){
@@ -743,17 +749,17 @@ router.get('/temp&humi/:macAddCapt/minTemp',(req,res) => {
             error : err
         });
     });
-    // }else{
-    //     res.status(404).json({
-    //     message : "I Cant Give You Data You Are Not A Member"
-    // })        
-    // }
+    }else{
+        res.status(404).json({
+        message : "I Cant Give You Data You Are Not A Member"
+    })        
+    }
 })
 
 
 
 router.get('/temp&humi/:macAddCapt/minhumi',(req,res) => {
-    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
     Capteur.findOne({macAddr :  req.params.macAddCapt }).exec()
     .then(result => {
         if(result){
@@ -788,16 +794,16 @@ router.get('/temp&humi/:macAddCapt/minhumi',(req,res) => {
             error : err
         });
     });
-    // }else{
-    //     res.status(404).json({
-    //     message : "I Cant Give You Data You Are Not A Member"
-    // })        
-    // }
+    }else{
+        res.status(404).json({
+        message : "I Cant Give You Data You Are Not A Member"
+    })        
+    }
 })
 
 
 router.get('/temp&humi/:macAddCapt/maxhumi',(req,res) => {
-    // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+    if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
     Capteur.findOne({macAddr :  req.params.macAddCapt }).exec()
     .then(result => {
         if(result){
@@ -832,11 +838,11 @@ router.get('/temp&humi/:macAddCapt/maxhumi',(req,res) => {
             error : err
         });
     });
-    // }else{
-    //     res.status(404).json({
-    //     message : "I Cant Give You Data You Are Not A Member"
-    // })        
-    // }
+    }else{
+        res.status(404).json({
+        message : "I Cant Give You Data You Are Not A Member"
+    })        
+    }
 })
 
 
