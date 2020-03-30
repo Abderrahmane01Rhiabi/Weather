@@ -10,7 +10,7 @@ mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
-Boolean
+
 const port = 3080;
 //Connection de base de donnes
 //mongoose.connect('mongodb+srv://<'+process.env.MONGOATLAS_USERNAME+'>:<'+process.env.MONGOATLAS_PASSWORD+'>@rh-2aapw.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true });
