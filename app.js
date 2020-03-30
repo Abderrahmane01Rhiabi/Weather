@@ -14,7 +14,7 @@ mongoose.set('useUnifiedTopology', true);
 const port = 3080;
 //Connection de base de donnes
 //mongoose.connect('mongodb+srv://<'+process.env.MONGOATLAS_USERNAME+'>:<'+process.env.MONGOATLAS_PASSWORD+'>@rh-2aapw.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true });
- mongoose.connect("mongodb://rhiabi:rhiabi@rh-shard-00-00-2aapw.mongodb.net:27017,rh-shard-00-01-2aapw.mongodb.net:27017,rh-shard-00-02-2aapw.mongodb.net:27017/OurApp?ssl=true&replicaSet=RH-shard-0&authSource=admin&retryWrites=true&w=majority"
+mongoose.connect("mongodb://rhiabi:rhiabi@rh-shard-00-00-2aapw.mongodb.net:27017,rh-shard-00-01-2aapw.mongodb.net:27017,rh-shard-00-02-2aapw.mongodb.net:27017/OurApp?ssl=true&replicaSet=RH-shard-0&authSource=admin&retryWrites=true&w=majority"
  , { useNewUrlParser: true });
 
 // mongoose.connect("mongodb://localhost:27017/OurDB", { useNewUrlParser: true });
