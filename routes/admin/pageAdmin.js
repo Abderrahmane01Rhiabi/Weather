@@ -234,4 +234,5 @@ router.post('/addAdmin',verifyToken,(req,res) => {
             })
         }
 })
+
 module.exports = router;
