@@ -33,7 +33,7 @@ router.get('/allDataCapteur',(req,res)=>{
     // }
 })
 
-router.get('/dataCapteur/:macAddr',verifyToken,(req,res)=>{
+router.get('/dataCapteur/:macAddr',(req,res)=>{
     // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
             Capteur.findOne({macAddr: req.params.macAddr}).exec()
             .then(data =>{
