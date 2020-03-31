@@ -116,9 +116,39 @@ router.post('/addCapteur',verifyToken, function(req,res){
     }
 });
 
-router.post('/deleteCapteur',verifyToken,(req,res) => {
+// router.post('/deleteCapteur',verifyToken,(req,res) => {
+//     if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
+//     Capteur.remove({macAddr : req.body.macAddr}).exec()
+//     .then(result => {
+//         //si le id nexiste pas il va affiche le 2em massage car lenght est >1
+//         if(result.deletedCount >= 1){
+//             console.log(result)
+//             res.status(200).json({
+//                 message : "Capteur Deleted"
+//             }) 
+//         }else{
+//             console.log(result)
+//             res.status(404).json({
+//                 message : "Capteur Not Founded"
+//             })
+//         }
+//     })
+//     .catch(err => {
+//         console.log(err);
+//         res.status(500).json({
+//             error : err
+//         });
+//     });
+//     }else{
+//         res.status(404).json({
+//         message : "I Cant Give You Data You Are Not A Member"
+//     })    
+//     }  
+// });
+
+router.post('/deleteCapteur/:macAddr',verifyToken,(req,res) => {
     if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
-    Capteur.remove({macAddr : req.body.macAddr}).exec()
+    Capteur.remove({macAddr : req.params.macAddr}).exec()
     .then(result => {
         //si le id nexiste pas il va affiche le 2em massage car lenght est >1
         if(result.deletedCount >= 1){
@@ -145,7 +175,6 @@ router.post('/deleteCapteur',verifyToken,(req,res) => {
     })    
     }  
 });
-
 // router.delete('/deleteCapteur',(req,res) => {
 //     // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin'){
 //     Capteur.remove({macAddr : req.body.macAddr}).exec()
