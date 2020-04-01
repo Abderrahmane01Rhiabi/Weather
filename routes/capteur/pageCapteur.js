@@ -633,14 +633,14 @@ router.get('/temp&humi/:macAddCapt/moyThisDay',(req,res) => {
 
 router.get('/temp&humi/:macAddCapt/lastData',(req,res) => {
     // if(res.adminData.role=='admin' || res.adminData.role=='supperAdmin' || res.adminData.role=='user'){
-        var date = new Date()
-        console.log(date)
-        var datee = new Date(date - (10*60*1000))
-        console.log(datee)
+        // var date = new Date()
+        // console.log(date)
+        // var datee = new Date(date - (10*60*1000))
+        // console.log(datee)
     Capteur.findOne({macAddr :  req.params.macAddCapt }).exec()
     .then(result => {
         if(result){
-            Weather.findOne({macAddCapt : req.params.macAddCapt},[] ,{ $orderby : { 'dateOfcomming' : -1 }}).exec()
+            Weather.find({macAddCapt : req.params.macAddCapt}).sort({"dateOfcomming" : -1}).limit(1).exec()
             .then(data => {
                 if(data){
                     console.log(data.length)
